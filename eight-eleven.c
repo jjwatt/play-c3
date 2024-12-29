@@ -15,6 +15,14 @@ double mapvalue(double value, double low1, double high1, double low2, double hig
     return lerp(low2, high2, n);
 }
 
+void draw_eight_eleven(double width, double height, double pow) {
+    for (int x = 5; x < width; x += 5) {
+	double n = mapvalue((double)x, 5, width, -1, 1);
+	double p = pow(n, 4);
+	double ypos = lerp(20, height, p);
+	caca_draw_line(cv, x, 0, x, ypos, '#');
+    }    
+}
 int main(void)
 {
     caca_canvas_t *cv;
