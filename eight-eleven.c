@@ -15,14 +15,15 @@ double mapvalue(double value, double low1, double high1, double low2, double hig
     return lerp(low2, high2, n);
 }
 
-void draw_eight_eleven(double width, double height, double pow) {
-    for (int x = 5; x < width; x += 5) {
-	double n = mapvalue((double)x, 5, width, -1, 1);
-	double p = pow(n, 4);
-	double ypos = lerp(20, height, p);
+void draw_eight_eleven(double width, double height, double power, caca_canvas_t *cv) {
+    for (int x = 2; x < width; x += 2) {
+	double n = mapvalue((double)x, 2, width, -1, 1);
+	double p = pow(n, power);
+	double ypos = lerp(10, height, p);
 	caca_draw_line(cv, x, 0, x, ypos, '#');
     }    
 }
+
 int main(void)
 {
     caca_canvas_t *cv;
@@ -34,12 +35,7 @@ int main(void)
     int width = caca_get_canvas_width(cv);
     int height = caca_get_canvas_height(cv);
     caca_set_color_ansi(cv, CACA_BLUE, CACA_BLACK);
-    for (int x = 5; x < width; x += 5) {
-	double n = mapvalue((double)x, 5, width, -1, 1);
-	double p = pow(n, 4);
-	double ypos = lerp(20, height, p);
-	caca_draw_line(cv, x, 0, x, ypos, '#');
-    }
+    draw_eight_eleven(width, height, 4, cv);
     caca_refresh_display(dp);
     caca_get_event(dp, CACA_EVENT_KEY_PRESS, &ev, -1);
     caca_free_display(dp);
