@@ -5,17 +5,19 @@ const int CACA_BLACK = 0x00;
 
 const int CACA_EVENT_KEY_PRESS = 0x0001;
 
-def Caca_display = void*;
-def Caca_canvas = void*;
-def Caca_event = void*;
+def Display = void*;
+def Canvas = void*;
+def Event = void*;
 
-extern fn Caca_display create_display(Caca_canvas*) @extern("caca_create_display");
-extern fn CInt free_display(Caca_display*) @extern("caca_free_display");
-extern fn Caca_canvas caca_get_canvas(Caca_display*);
-extern fn CInt caca_free_canvas(Caca_canvas*);
-extern fn CInt caca_get_canvas_width(Caca_canvas*);
-extern fn CInt caca_get_canvas_height(Caca_canvas*);
-extern fn CInt caca_set_color_ansi(Caca_canvas*, uint, uint);
-extern fn CInt caca_get_event(Caca_display*, CInt, Caca_event*, int);
-extern fn CInt caca_fill_box(Caca_canvas*, CInt, CInt, CInt, CInt, uint);
-extern fn CInt caca_refresh_display(Caca_display*);
+extern fn Display create_display(Canvas*) @extern("caca_create_display");
+extern fn CInt free_display(Display*) @extern("caca_free_display");
+extern fn Canvas get_canvas(Display*) @extern("caca_get_canvas");;
+extern fn CInt free_canvas(Canvas*) @extern("caca_free_canvas");
+extern fn CInt get_canvas_width(Canvas*) @extern("caca_get_canvas");
+extern fn CInt get_canvas_height(Canvas*) @extern("caca_get_canvas_height");
+extern fn CInt set_color_ansi(Canvas*, uint, uint) @extern("caca_set_color_ansi");
+extern fn CInt get_event(Display*, CInt, Event*, int) @extern("caca_get_event");
+extern fn CInt fill_box(Canvas*, CInt, CInt, CInt, CInt, uint) @extern("caca_fill_box");
+extern fn CInt refresh_display(Display*) @extern("caca_refresh_display");
+
+
