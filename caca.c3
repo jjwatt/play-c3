@@ -9,8 +9,8 @@ def Caca_display = void*;
 def Caca_canvas = void*;
 def Caca_event = void*;
 
-extern fn Caca_display caca_create_display(Caca_canvas*);
-extern fn CInt caca_free_display(Caca_display*);
+extern fn Caca_display create_display(Caca_canvas*) @extern("caca_create_display");
+extern fn CInt free_display(Caca_display*) @extern("caca_free_display");
 extern fn Caca_canvas caca_get_canvas(Caca_display*);
 extern fn CInt caca_free_canvas(Caca_canvas*);
 extern fn CInt caca_get_canvas_width(Caca_canvas*);
