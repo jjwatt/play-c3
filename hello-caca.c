@@ -1,4 +1,5 @@
 #include <caca.h>
+#include <unistd.h>
 
 struct Square {
     int w;
