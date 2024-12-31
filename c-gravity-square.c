@@ -19,15 +19,15 @@ int main(void)
     struct Square square = { 20, 10, (w / 2) - 50, (h / 2) - 10 };
 
     /* Velocity */
-    float dx = 1.0f;
+    float dx = 3.0f;
     float dy = 0.0f;
 
     /* Physics */
     const float gravity = 0.3f;
     /* energy loss on collision 1.0 = 0 loss, 0.0 = total loss */
-    const float damping = 0.8f;
+    const float damping = 0.7f;
     /* horizonatal speed decay */
-    const float air_resistance = 0.99f;
+    const float air_resistance = 0.995f;
 
     caca_set_color_ansi(cv, CACA_BLUE, CACA_BLACK);
     caca_fill_box(cv, square.x, square.y, square.w, square.h, '#');
@@ -78,7 +78,7 @@ int main(void)
 	caca_fill_box(cv, (int)square.x, (int)square.y,
 		      (int)square.w, (int)square.h, '#');
 	caca_refresh_display(dp);
-	usleep(20000);
+	usleep(30000);
     }
     caca_free_canvas(cv);
     caca_free_display(dp);
