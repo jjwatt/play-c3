@@ -1,9 +1,9 @@
 module caca;
 
-const int CACA_BLUE = 0x01;
-const int CACA_BLACK = 0x00;
+const int BLUE = 0x01;
+const int BLACK = 0x00;
 
-const int CACA_EVENT_KEY_PRESS = 0x0001;
+const int EVENT_KEY_PRESS = 0x0001;
 
 def Display = void*;
 def Canvas = void*;
@@ -11,7 +11,7 @@ def Event = void*;
 
 extern fn Display create_display(Canvas*) @extern("caca_create_display");
 extern fn CInt free_display(Display*) @extern("caca_free_display");
-extern fn Canvas get_canvas(Display*) @extern("caca_get_canvas");;
+extern fn Canvas get_canvas(Display*) @extern("caca_get_canvas");
 extern fn CInt free_canvas(Canvas*) @extern("caca_free_canvas");
 extern fn CInt get_canvas_width(Canvas*) @extern("caca_get_canvas");
 extern fn CInt get_canvas_height(Canvas*) @extern("caca_get_canvas_height");
