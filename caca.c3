@@ -21,4 +21,5 @@ extern fn CInt get_event(Display*, CInt, Event*, int) @extern("caca_get_event");
 extern fn CInt fill_box(Canvas*, CInt, CInt, CInt, CInt, uint) @extern("caca_fill_box");
 extern fn CInt refresh_display(Display*) @extern("caca_refresh_display");
 extern fn CInt rand(CInt, CInt) @extern("caca_rand");
-
+extern fn CInt get_display_time(Display*) @extern("caca_get_display_time");
+extern fn CInt get_frame_count(Display*) @extern("caca_get_frame_count");
