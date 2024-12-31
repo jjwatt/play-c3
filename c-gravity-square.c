@@ -23,15 +23,15 @@ int main(void)
     float dy = 0.0f;
 
     /* Physics */
-    const float gravity = 0.4f;
+    const float gravity = 0.3f;
     /* energy loss on collision 1.0 = 0 loss, 0.0 = total loss */
-    const float damping = 0.7f;
+    const float damping = 0.8f;
     /* horizonatal speed decay */
     const float air_resistance = 0.99f;
 
     caca_set_color_ansi(cv, CACA_BLUE, CACA_BLACK);
     caca_fill_box(cv, square.x, square.y, square.w, square.h, '#');
-    while (!caca_get_event(dp, CACA_EVENT_KEY_PRESS, &ev, 0)) {
+    while (!caca_get_event(dp, CACA_EVENT_KEY_PRESS, NULL, 0)) {
 	caca_clear_canvas(cv);
 	// Apply gravity.
 	dy += gravity;
@@ -40,8 +40,8 @@ int main(void)
 	dx *= air_resistance;
 
 	// Update position.
-	square.x += (int)dx;
-	square.y += (int)dy;
+	square.x += dx;
+	square.y += dy;
 
 	// Handle collisions with bounds
 	if (square.x >= w - square.w || square.x <= 0) {
@@ -75,11 +75,12 @@ int main(void)
 	    }
 	    caca_set_color_ansi(cv, caca_rand(1, 16), CACA_BLACK);
 	}
-	caca_fill_box(cv, square.x, square.y, square.w, square.h, '#');
+	caca_fill_box(cv, (int)square.x, (int)square.y,
+		      (int)square.w, (int)square.h, '#');
 	caca_refresh_display(dp);
-	usleep(16000);
+	usleep(20000);
     }
-    caca_free_display(dp);
     caca_free_canvas(cv);
+    caca_free_display(dp);
     return 0;
 }
