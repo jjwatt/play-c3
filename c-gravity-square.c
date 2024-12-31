@@ -25,9 +25,9 @@ int main(void)
     /* Physics */
     const float gravity = 0.3f;
     /* energy loss on collision 1.0 = 0 loss, 0.0 = total loss */
-    const float damping = 0.7f;
+    const float damping = 0.6f;
     /* horizonatal speed decay */
-    const float air_resistance = 0.995f;
+    const float air_resistance = 0.99f;
 
     caca_set_color_ansi(cv, CACA_BLUE, CACA_BLACK);
     caca_fill_box(cv, square.x, square.y, square.w, square.h, '#');
