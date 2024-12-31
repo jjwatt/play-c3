@@ -38,13 +38,14 @@ fn void main()
 	square.y += square.dy;
 	if (square.x >= c_width - square.width || square.x <= 1) {
 	    caca::set_color_ansi(cv, caca::rand(1, 16), caca::BLACK);
-	    square.dx *= -1;            
+	    square.dx *= -1;
 	}
 	if (square.y >= c_height - square.height || square.y <= 1) {
 	    caca::set_color_ansi(cv, caca::rand(1, 16), caca::BLACK);
-	    square.dy *= -1;            
+	    square.dy *= -1;
 	}
-	caca::fill_box(cv, square.x, square.y, square.width, square.height, '#');
+	caca::fill_box(cv, square.x, square.y,
+		       square.width, square.height, '#');
 	caca::refresh_display(dp);
 	thread::sleep(80000);
 	dt += 1;
