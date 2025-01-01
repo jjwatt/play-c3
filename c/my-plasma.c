@@ -112,7 +112,7 @@ int main() {
 
 
 	caca_refresh_display(dp);
-	usleep(10000);
+	usleep(20000);
         // Clear the screen (system-specific)
         caca_clear_canvas(cv);
     }
