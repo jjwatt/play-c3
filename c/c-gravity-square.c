@@ -52,7 +52,7 @@ int main(void)
 	    if (square.x <= 0) {
 		square.x = 0;
 	    }
-	    dx += -damping;
+	    dx *= -damping;
 	    caca_set_color_ansi(cv, caca_rand(1, 16), CACA_BLACK);
 	}
 	if (square.y >= h - square.h || square.y <= 0) {
@@ -68,10 +68,10 @@ int main(void)
 		    // Additional friction on the ground.
 		    dx *= 0.95f;
 		}
-		if (square.y <= 0) {
-		    square.y = 0;
-		    dy *= -damping;
-		}
+	    }
+	    if (square.y <= 0) {
+	      square.y = 0;
+	      dy *= -damping;
 	    }
 	    caca_set_color_ansi(cv, caca_rand(1, 16), CACA_BLACK);
 	}
