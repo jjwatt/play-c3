@@ -25,7 +25,7 @@ int main(void)
     /* Physics */
     const float gravity = 0.5f;
     /* energy loss on collision 1.0 = 0 loss, 0.0 = total loss */
-    const float damping = 0.9f;
+    const float damping = 0.8f;
     /* horizonatal speed decay */
     const float air_resistance = 0.995f;
 
@@ -60,7 +60,7 @@ int main(void)
 	    if (square.y >= h - square.h) {
 		square.y = h - square.h;
 		// Only bounce if moving fast enough.
-		if (dy > 0.5f) {
+		if (dy >= 0.5f) {
 		    dy *= -damping;
 		} else {
 		    // Stop bouncing when too slow.
