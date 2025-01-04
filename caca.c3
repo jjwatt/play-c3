@@ -25,4 +25,4 @@ extern fn CInt rand(CInt, CInt) @extern("caca_rand");
 extern fn CInt get_display_time(Display*) @extern("caca_get_display_time");
 extern fn CInt get_frame_count(Display*) @extern("caca_get_frame_count");
 extern fn CInt put_str(Canvas*, CInt, CInt, CChar*) @extern("caca_put_str");
-
+extern fn CInt put_char(Canvas*, CInt, CInt, uint) @extern("caca_put_char");
