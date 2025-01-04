@@ -3,7 +3,6 @@ import std::thread;
 import caca;
 
 struct Square {
-    // TODO: Can probably use floats for these
     // TODO: Make a position vector with x,y
     float width, height, x, y;
     float [<2>] velocity;
@@ -16,6 +15,7 @@ struct World {
     /* horizontal speed decay */
     float air_resistance;
 }
+
 fn int main() {
     caca::Display *dp;
     caca::Canvas *cv;
