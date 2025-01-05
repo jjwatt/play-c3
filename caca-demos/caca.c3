@@ -8,6 +8,7 @@ const int EVENT_KEY_PRESS = 0x0001;
 def Display = void*;
 def Canvas = void*;
 def Event = void*;
+def Dither = void*;
 
 extern fn Display create_display(Canvas*) @extern("caca_create_display");
 extern fn CInt free_display(Display*) @extern("caca_free_display");
