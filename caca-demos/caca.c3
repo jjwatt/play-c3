@@ -4,6 +4,7 @@ const int BLUE = 0x01;
 const int BLACK = 0x00;
 
 const int EVENT_KEY_PRESS = 0x0001;
+const int EVENT_QUIT = 0x0040;
 
 def Display = void*;
 def Canvas = void*;
@@ -30,3 +31,4 @@ extern fn CInt put_char(Canvas*, CInt, CInt, uint) @extern("caca_put_char");
 extern fn Dither create_dither(CInt, CInt, CInt, CInt,
                              uint, uint, uint, uint) @extern("caca_create_dither");
 extern fn CInt free_dither(Dither*) @extern("caca_free_dither");
+extern fn CInt set_dither_palette(Dither*, uint*, uint*, uint*, uint*) @extern("caca_set_dither_palette");
