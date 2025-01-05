@@ -1,6 +1,6 @@
 module plasma_caca;
 import std::math;
-
+import std::thread;
 import caca;
 
 const int XSIZ = 256;
@@ -10,6 +10,30 @@ const int TABLEY = YSIZ * 2;
 
 int frame;
 uint[TABLEX * TABLEY] table;
+
+fn void do_plasma(uint *pixels, double x_1, double y_1, double x_2, double y_2,
+                  double x_3, double y_3) {
+    uint x1 = (uint)(x_1 * (TABLEX / 2));
+    uint y1 = (uint)(y_1 * (TABLEX / 2));
+    uint x2 = (uint)(x_1 * (TABLEX / 2));
+    uint y2 = (uint)(y_2 * (TABLEX / 2));
+    uint x3 = (uint)(x_3 * (TABLEX / 2));
+    uint y3 = (uint)(y_3 * (TABLEX / 2));
+    uint y;
+    uint *t1 = &table + x1 + y1 * TABLEX;
+    uint *t2 = &table + x2 + y2 * TABLEX;
+    uint *t3 = &table + x3 + y3 * TABLEX;
+
+    // for(y = 0; y < YSIZ; y++) {
+    // 	uint x;
+    // 	uint *tmp = pixels + y * YSIZ;
+    // 	uint ty = y * TABLEX;
+    // 	uint tmax = ty + XSIZ;
+    // 	for(x = 0; ty < tmax; ty++, tmp++) {
+    // 	    tmp[0] = t1[ty] + t2[ty] + t3[ty];
+    // 	}
+    // }
+}
 
 fn int main() {
     caca::Display *dp;
@@ -78,9 +102,23 @@ fn int main() {
 	// Set the palette
 	caca::set_dither_palette(dither, &red, &green, &blue, &alpha);
 
-	caca::set_color_ansi(cv, caca::BLUE, caca::BLACK);
-	caca::fill_box(cv, 10, 10, 10, 10, '#');
+	// do plasma effect
+	do_plasma(screen,
+                  (1.0 + math::sin(((double)frame) * big_r[0])) / 2,
+                  (1.0 + math::sin(((double)frame) * big_r[1])) / 2,
+                  (1.0 + math::sin(((double)frame) * big_r[2])) / 2,
+                  (1.0 + math::sin(((double)frame) * big_r[3])) / 2,
+                  (1.0 + math::sin(((double)frame) * big_r[4])) / 2,
+                  (1.0 + math::sin(((double)frame) * big_r[5])) / 2);
+
+	/* Render */
+	caca::dither_bitmap(cv, 0, 0,
+	                    caca::get_canvas_width(cv),
+	                    caca::get_canvas_height(cv),
+	                    dither, screen);
 	caca::refresh_display(dp);
+	thread::sleep(20_000);
+	caca::clear_canvas(cv);
     }
     
     free(screen);

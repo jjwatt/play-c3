@@ -32,3 +32,4 @@ extern fn Dither create_dither(CInt, CInt, CInt, CInt,
                              uint, uint, uint, uint) @extern("caca_create_dither");
 extern fn CInt free_dither(Dither*) @extern("caca_free_dither");
 extern fn CInt set_dither_palette(Dither*, uint*, uint*, uint*, uint*) @extern("caca_set_dither_palette");
+extern fn CInt dither_bitmap(Canvas*, CInt, CInt, CInt, CInt, Dither*, void*) @extern("caca_dither_bitmap");
