@@ -24,8 +24,8 @@ fn void do_plasma(uint *pixels, double x_1, double y_1, double x_2, double y_2,
     uint *t2 = &table[x2 + y2 * TABLEX];
     uint *t3 = &table[x3 + y3 * TABLEX];
     // Print initial coordinates
-    io::eprintfn("Coordinates: (%d,%d) (%d,%d) (%d,%d)\n", 
-               x1, y1, x2, y2, x3, y3);
+    // io::eprintfn("Coordinates: (%d,%d) (%d,%d) (%d,%d)\n", 
+    //            x1, y1, x2, y2, x3, y3);
     uint y;
     for(y = 0; y < YSIZ; y++) {
 	uint x;
@@ -49,10 +49,7 @@ fn int main() {
     dp = caca::create_display(null);
     if (!dp) return 1;
     cv = caca::get_canvas(dp);
-    defer {
-	caca::free_canvas(cv);
-	caca::free_display(dp);
-    }
+
     int width = caca::get_canvas_width(cv);
     int height = caca::get_canvas_height(cv);
 
@@ -69,6 +66,10 @@ fn int main() {
     /* Prepare */
     // Fill various tables
     // They're zeroed by default in C3
+    for(i = 0; i < 256; i++) {
+	red[i] = green[i] = blue[i] = alpha[i] = 0;
+    }
+    
     for (i = 0; i < 3; i++) {
 	r[i] = (double)(caca::rand(1, 1000)) / 60_000 * math::PI;
     }
@@ -82,7 +83,7 @@ fn int main() {
 	    double tmp = (((double)((x - (TABLEX / 2)) * (x - (TABLEX / 2))
 	                            + (y - (TABLEX / 2)) * (y - (TABLEX / 2))))
 	                  * (math::PI / (TABLEX * TABLEX + TABLEY * TABLEY)));
-	    table[x + y * TABLEX] = (uint)(1.0 + math::sin(12.0 * math::sqrt((uint)tmp))) * 256 / 6;
+	    table[x + y * TABLEX] = (uint)(1.0 + math::sin(12.0 * math::sqrt(tmp))) * 256 / 6;
 	}
     }
 
@@ -104,7 +105,7 @@ fn int main() {
 	frame++;
 
 	// Set the palette
-	caca::set_dither_palette(dither, &red[0], &green[0], &blue[0], &alpha[0]);
+	caca::set_dither_palette(dither, &red, &green, &blue, &alpha);
 
 	// do plasma effect
 	do_plasma(screen,
@@ -120,12 +121,14 @@ fn int main() {
 	                    caca::get_canvas_width(cv),
 	                    caca::get_canvas_height(cv),
 	                    dither, screen);
-	//caca::refresh_display(dp);
-	thread::sleep(20_000);
-	//caca::clear_canvas(cv);
+	caca::refresh_display(dp);
+	thread::sleep(2000);
+	caca::clear_canvas(cv);
     }
     
     free(screen);
     caca::free_dither(dither);
+    caca::free_canvas(cv);
+    caca::free_display(dp);
     return 0;
 }
