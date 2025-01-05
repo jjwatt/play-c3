@@ -16,47 +16,32 @@ fn void do_plasma(uint *pixels, double x_1, double y_1, double x_2, double y_2,
                   double x_3, double y_3) {
     uint x1 = (uint)(x_1 * (TABLEX / 2));
     uint y1 = (uint)(y_1 * (TABLEX / 2));
-    uint x2 = (uint)(x_1 * (TABLEX / 2));
+    uint x2 = (uint)(x_2 * (TABLEX / 2));
     uint y2 = (uint)(y_2 * (TABLEX / 2));
     uint x3 = (uint)(x_3 * (TABLEX / 2));
     uint y3 = (uint)(y_3 * (TABLEX / 2));
-    uint *t1 = &table + x1 + y1 * TABLEX;
-    uint *t2 = &table + x2 + y2 * TABLEX;
-    uint *t3 = &table + x3 + y3 * TABLEX;
-
-    for(uint y = 0; y < YSIZ; y++) {
-        uint *tmp = pixels + y * YSIZ;
-        uint ty = y * TABLEX;
-	uint tmax = ty + XSIZ; 
-        for(uint x = 0; ty < tmax; ty++, tmp++) {
-	    *tmp = t1[0];
-            // *tmp = t1[ty] + t2[ty] + t3[ty]; 
-        }
+    uint *t1 = &table[x1 + y1 * TABLEX];
+    uint *t2 = &table[x2 + y2 * TABLEX];
+    uint *t3 = &table[x3 + y3 * TABLEX];
+    // Print initial coordinates
+    io::eprintfn("Coordinates: (%d,%d) (%d,%d) (%d,%d)\n", 
+               x1, y1, x2, y2, x3, y3);
+    uint y;
+    for(y = 0; y < YSIZ; y++) {
+	uint x;
+	uint *tmp = pixels + y * YSIZ;
+	uint ty = y * TABLEX;
+	uint tmax = ty + XSIZ;
+	for(x = 0; ty < tmax; ty++) {
+	    tmp[0] = t1[ty] + t2[ty] + t3[ty];
+	    tmp++;
+	}
     }
-    // for(uint y = 0; y < YSIZ; y++) {
-    // 	uint *tmp = pixels + y * YSIZ;
-    // 	for(uint x = 0; x < XSIZ; x++) {
-    //         uint ty = y * TABLEX;
-    //         // *tmp = t1[ty] + t2[ty] + t3[ty];
-    //         tmp++; 
-    //     }
-    // }
-    
-    // for(y = 0; y < YSIZ; y++) {
-    // 	uint x;
-    // 	uint *tmp = pixels + y * YSIZ;
-    // 	uint ty = y * TABLEX;
-    // 	uint tmax = ty + XSIZ;
-    // 	for(x = 0; ty < tmax; ty++) {
-    // 	    *tmp = t1[ty] + t2[ty] + t3[ty];
-    // 	    tmp++;
-    // 	}
-    // }
 }
 
 fn int main() {
-    caca::Display *dp;
     caca::Canvas *cv;
+    caca::Display *dp;
     caca::Event ev;
     // static?
     caca::Dither *dither;
@@ -119,7 +104,7 @@ fn int main() {
 	frame++;
 
 	// Set the palette
-	caca::set_dither_palette(dither, &red, &green, &blue, &alpha);
+	caca::set_dither_palette(dither, &red[0], &green[0], &blue[0], &alpha[0]);
 
 	// do plasma effect
 	do_plasma(screen,
@@ -135,9 +120,9 @@ fn int main() {
 	                    caca::get_canvas_width(cv),
 	                    caca::get_canvas_height(cv),
 	                    dither, screen);
-	caca::refresh_display(dp);
+	//caca::refresh_display(dp);
 	thread::sleep(20_000);
-	caca::clear_canvas(cv);
+	//caca::clear_canvas(cv);
     }
     
     free(screen);
