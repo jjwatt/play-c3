@@ -4,10 +4,10 @@ import std::thread;
 import std::io;
 import caca;
 
-const int XSIZ = 256;
-const int YSIZ = 256;
-const int TABLEX = XSIZ * 2;
-const int TABLEY = YSIZ * 2;
+const uint XSIZ = 256;
+const uint YSIZ = 256;
+const uint TABLEX = XSIZ * 2;
+const uint TABLEY = YSIZ * 2;
 
 int frame;
 uint[TABLEX * TABLEY] table;
@@ -24,15 +24,23 @@ fn void do_plasma(uint *pixels, double x_1, double y_1, double x_2, double y_2,
     uint *t2 = &table + x2 + y2 * TABLEX;
     uint *t3 = &table + x3 + y3 * TABLEX;
 
-   for(uint y = 0; y < YSIZ; y++) {
-       uint *tmp = pixels + y * YSIZ;
-       io::printfn("pixels: %s", &pixels);
-       for(uint x = 0; x < XSIZ; x++) {
-           uint ty = y * TABLEX; 
-           *tmp = t1[ty] + t2[ty] + t3[ty]; 
-           tmp++; 
+    for(uint y = 0; y < YSIZ; y++) {
+        uint *tmp = pixels + y * YSIZ;
+        uint ty = y * TABLEX;
+	uint tmax = ty + XSIZ; 
+        for(uint x = 0; ty < tmax; ty++, tmp++) {
+	    *tmp = t1[0];
+            // *tmp = t1[ty] + t2[ty] + t3[ty]; 
         }
     }
+    // for(uint y = 0; y < YSIZ; y++) {
+    // 	uint *tmp = pixels + y * YSIZ;
+    // 	for(uint x = 0; x < XSIZ; x++) {
+    //         uint ty = y * TABLEX;
+    //         // *tmp = t1[ty] + t2[ty] + t3[ty];
+    //         tmp++; 
+    //     }
+    // }
     
     // for(y = 0; y < YSIZ; y++) {
     // 	uint x;
