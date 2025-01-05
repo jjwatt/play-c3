@@ -1,6 +1,7 @@
 module plasma_caca;
 import std::math;
 import std::thread;
+import std::io;
 import caca;
 
 const int XSIZ = 256;
@@ -19,18 +20,28 @@ fn void do_plasma(uint *pixels, double x_1, double y_1, double x_2, double y_2,
     uint y2 = (uint)(y_2 * (TABLEX / 2));
     uint x3 = (uint)(x_3 * (TABLEX / 2));
     uint y3 = (uint)(y_3 * (TABLEX / 2));
-    uint y;
     uint *t1 = &table + x1 + y1 * TABLEX;
     uint *t2 = &table + x2 + y2 * TABLEX;
     uint *t3 = &table + x3 + y3 * TABLEX;
 
+   for(uint y = 0; y < YSIZ; y++) {
+       uint *tmp = pixels + y * YSIZ;
+       io::printfn("pixels: %s", &pixels);
+       for(uint x = 0; x < XSIZ; x++) {
+           uint ty = y * TABLEX; 
+           *tmp = t1[ty] + t2[ty] + t3[ty]; 
+           tmp++; 
+        }
+    }
+    
     // for(y = 0; y < YSIZ; y++) {
     // 	uint x;
     // 	uint *tmp = pixels + y * YSIZ;
     // 	uint ty = y * TABLEX;
     // 	uint tmax = ty + XSIZ;
-    // 	for(x = 0; ty < tmax; ty++, tmp++) {
-    // 	    tmp[0] = t1[ty] + t2[ty] + t3[ty];
+    // 	for(x = 0; ty < tmax; ty++) {
+    // 	    *tmp = t1[ty] + t2[ty] + t3[ty];
+    // 	    tmp++;
     // 	}
     // }
 }
