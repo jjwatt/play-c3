@@ -15,6 +15,9 @@ fn int main() {
     caca::Display *dp;
     caca::Canvas *cv;
     caca::Event ev;
+    // static?
+    caca::Dither *dither;
+
     dp = caca::create_display(null);
     if (!dp) return 1;
     cv = caca::get_canvas(dp);
@@ -25,7 +28,6 @@ fn int main() {
     int width = caca::get_canvas_width(cv);
     int height = caca::get_canvas_height(cv);
 
-    static caca::Dither *dither;
     static uint *screen;
     static uint[256] red;
     static uint[256] green;
@@ -47,9 +49,24 @@ fn int main() {
 	big_r[i] = (double)(caca::rand(1, 1000)) / 10_000;
     }
 
+    for (y = 0; y < TABLEY; y++) {
+	for(x = 0; x < TABLEX; x++) {
+	    double tmp = (((double)((x - (TABLEX / 2)) * (x - (TABLEX / 2))
+	                            + (y - (TABLEX / 2)) * (y - (TABLEX / 2))))
+	                  * (math::PI / (TABLEX * TABLEX + TABLEY * TABLEY)));
+	    table[x + y * TABLEX] = (uint)(1 + math::sin(12 * math::sqrt((uint)tmp))) * 256 / 6;
+	}
+    }
+
+    /* Init */
+    screen = malloc(XSIZ * YSIZ * uint.sizeof);
+    dither = caca::create_dither(8, XSIZ, YSIZ, XSIZ, 0, 0, 0, 0);
+    
     caca::set_color_ansi(cv, caca::BLUE, caca::BLACK);
     caca::fill_box(cv, 10, 10, 10, 10, '#');
     caca::refresh_display(dp);
     caca::get_event(dp, caca::EVENT_KEY_PRESS, ev, -1);
+    free(screen);
+    caca::free_dither(dither);
     return 0;
 }
