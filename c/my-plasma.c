@@ -25,14 +25,18 @@ static void do_plasma(uint8_t *pixels, double x_1, double y_1,
     uint8_t * t1 = table + X1 + Y1 * TABLEX,
             * t2 = table + X2 + Y2 * TABLEX,
             * t3 = table + X3 + Y3 * TABLEX;
-
+    /* fprintf(stderr, "Coordinates: (%d,%d) (%d,%d) (%d,%d)\n",  */
+    /* 		 X1, Y1, X2, Y2, X3, Y3); */
     for(y = 0; y < YSIZ; y++)
     {
         unsigned int x;
         uint8_t * tmp = pixels + y * YSIZ;
         unsigned int ty = y * TABLEX, tmax = ty + XSIZ;
-        for(x = 0; ty < tmax; ty++, tmp++)
-            tmp[0] = t1[ty] + t2[ty] + t3[ty];
+        for(x = 0; ty < tmax; ty++, tmp++) {
+	   tmp[0] = t1[ty] + t2[ty] + t3[ty];
+	   /* fprintf(stderr, "tmp[0]: %d\n", tmp[0]); */
+	   /* fprintf(stderr, "pixels: %d\n", pixels[ty]); */
+	}
     }
 }
 
@@ -46,7 +50,8 @@ int main() {
     cv = caca_get_canvas(dp);
     int width = caca_get_canvas_width(cv);
     int height = caca_get_canvas_height(cv);
-
+    fprintf(stderr, "width: %d\n", width);
+    fprintf(stderr, "height: %d\n", height);
     static caca_dither_t *dither;
     static uint8_t *screen;
     static uint32_t red[256], green[256], blue[256], alpha[256];
@@ -89,6 +94,7 @@ int main() {
             red[i] = (1.0 + sin(z + r[1] * frame)) / 2 * 0xfff;
             blue[i] = (1.0 + cos(z + r[0] * (frame + 100))) / 2 * 0xfff;
             green[i] = (1.0 + cos(z + r[2] * (frame + 200))) / 2 * 0xfff;
+	    /* fprintf(stderr, "red[%d]: %d\n", i, red[i]); */
         }
 
 	frame++;

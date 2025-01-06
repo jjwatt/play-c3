@@ -34,6 +34,7 @@ fn void do_plasma(CUInt *pixels, double x_1, double y_1, double x_2, double y_2,
 	    // io::eprintfn("t1[ty]: %s", t1[ty]);
 	    tmp[0] = (t1[ty] + t2[ty] + t3[ty]);
 	    // io::eprintfn("tmp[0]: %s", tmp[0]);
+	    // io::eprintfn("pixels: %s", pixels[ty]);
 	}
     }
 }
@@ -66,9 +67,9 @@ fn int main() {
     /* Prepare */
     // Fill various tables
     // They're zeroed by default in C3
-    for(i = 0; i < 256; i++) {
-	red[i] = green[i] = blue[i] = alpha[i] = 0;
-    }
+    // for(i = 0; i < 256; i++) {
+    // 	red[i] = green[i] = blue[i] = alpha[i] = 0;
+    // }
     
     for (i = 0; i < 3; i++) {
 	r[i] = (double)(caca::rand(1, 1000)) / 60_000 * math::PI;
@@ -83,13 +84,13 @@ fn int main() {
 	    double tmp = (((double)((x - (TABLEX / 2)) * (x - (TABLEX / 2))
 	                            + (y - (TABLEX / 2)) * (y - (TABLEX / 2))))
 	                  * (math::PI / (TABLEX * TABLEX + TABLEY * TABLEY)));
-	    table[x + y * TABLEX] = (CUInt)((1.0 + math::sin(12.0 * math::sqrt(tmp))) * 256 / 6);
+	    table[x + y * TABLEX] = (uint)((1.0 + math::sin(12.0 * math::sqrt(tmp))) * 256 / 6);
 	    // io::eprintfn("table[x + y * TABLEX]: %s", table[x + y * TABLEX]);
 	}
     }
 
     /* Init */
-    screen = malloc(XSIZ * YSIZ * 8);
+    screen = malloc(XSIZ * YSIZ * uint.sizeof);
     dither = caca::create_dither(8, XSIZ, YSIZ, XSIZ, 0, 0, 0, 0);
 
     /* Update */
@@ -97,9 +98,9 @@ fn int main() {
 	for(i = 0; i < 256; i++) {
 	    double z = ((double)i) / 256 * 6 * math::PI;
 	    // io::eprintfn("z: %s", z);
-	    red[i] = (CUInt)((1.0 + math::sin(z + r[1] * frame)) / 2 * 0xfff) % 256;
-	    blue[i] = (CUInt)((1.0 + math::cos(z + r[0] * (double)(frame + 100))) / 2 * 0xfff) % 256;
-	    green[i] = (CUInt)((1.0 + math::cos(z + r[2] * (double)(frame + 200))) / 2 * 0xfff) % 256;
+	    red[i] = (CUInt)((1.0 + math::sin(z + r[1] * frame)) / 2 * 0xfff);
+	    blue[i] = (CUInt)((1.0 + math::cos(z + r[0] * (double)(frame + 100))) / 2 * 0xfff);
+	    green[i] = (CUInt)((1.0 + math::cos(z + r[2] * (double)(frame + 200))) / 2 * 0xfff);
 	    // io::eprintfn("r[1]: %s", r[1]);
 	    // io::eprintfn("r[0]: %s", r[0]);
 	    // io::eprintfn("r[2]: %s", r[2]);
@@ -114,6 +115,7 @@ fn int main() {
 
 	// Set the palette
 	caca::set_dither_palette(dither, &red, &green, &blue, &alpha);
+
 	// do plasma effect
 	do_plasma(screen,
                   (1.0 + math::sin(((double)frame) * big_r[0])) / 2,
@@ -129,7 +131,7 @@ fn int main() {
 	                    caca::get_canvas_height(cv),
 	                    dither, screen);
 	caca::refresh_display(dp);
-	thread::sleep(20_000);
+	thread::sleep(20000);
 	caca::clear_canvas(cv);
     }
     
