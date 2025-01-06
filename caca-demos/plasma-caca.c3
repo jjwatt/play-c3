@@ -4,37 +4,36 @@ import std::thread;
 import std::io;
 import caca;
 
-const uint XSIZ = 256;
-const uint YSIZ = 256;
-const uint TABLEX = XSIZ * 2;
-const uint TABLEY = YSIZ * 2;
+const CUInt XSIZ = 256;
+const CUInt YSIZ = 256;
+const CUInt TABLEX = XSIZ * 2;
+const CUInt TABLEY = YSIZ * 2;
 
 int frame;
 uint[TABLEX * TABLEY] table;
 
-fn void do_plasma(uint *pixels, double x_1, double y_1, double x_2, double y_2,
+fn void do_plasma(CUInt *pixels, double x_1, double y_1, double x_2, double y_2,
                   double x_3, double y_3) {
-    uint x1 = (uint)(x_1 * (TABLEX / 2));
-    uint y1 = (uint)(y_1 * (TABLEX / 2));
-    uint x2 = (uint)(x_2 * (TABLEX / 2));
-    uint y2 = (uint)(y_2 * (TABLEX / 2));
-    uint x3 = (uint)(x_3 * (TABLEX / 2));
-    uint y3 = (uint)(y_3 * (TABLEX / 2));
-    uint *t1 = &table[x1 + y1 * TABLEX];
-    uint *t2 = &table[x2 + y2 * TABLEX];
-    uint *t3 = &table[x3 + y3 * TABLEX];
+    CUInt x1 = (CUInt)(x_1 * (TABLEX / 2));
+    CUInt y1 = (CUInt)(y_1 * (TABLEY / 2));
+    CUInt x2 = (CUInt)(x_2 * (TABLEX / 2));
+    CUInt y2 = (CUInt)(y_2 * (TABLEY / 2));
+    CUInt x3 = (CUInt)(x_3 * (TABLEX / 2));
+    CUInt y3 = (CUInt)(y_3 * (TABLEY / 2));
+    CUInt *t1 = &table[x1 + y1 * TABLEX];
+    CUInt *t2 = &table[x2 + y2 * TABLEX];
+    CUInt *t3 = &table[x3 + y3 * TABLEX];
     // Print initial coordinates
-    // io::eprintfn("Coordinates: (%d,%d) (%d,%d) (%d,%d)\n", 
-    //            x1, y1, x2, y2, x3, y3);
-    uint y;
-    for(y = 0; y < YSIZ; y++) {
-	uint x;
-	uint *tmp = pixels + y * YSIZ;
-	uint ty = y * TABLEX;
-	uint tmax = ty + XSIZ;
-	for(x = 0; ty < tmax; ty++) {
-	    tmp[0] = t1[ty] + t2[ty] + t3[ty];
-	    tmp++;
+    // io::eprintfn("Coordinates: (%d,%d) (%d,%d) (%d,%d)", 
+    // 		 x1, y1, x2, y2, x3, y3);
+    for(uint y = 0; y < YSIZ; y++) {
+	CUInt *tmp = pixels + y * YSIZ;
+	CUInt ty = y * TABLEX;
+	CUInt tmax = ty + XSIZ;
+	for(uint x = 0; ty < tmax; ty++, tmp++) {
+	    // io::eprintfn("t1[ty]: %s", t1[ty]);
+	    tmp[0] = (t1[ty] + t2[ty] + t3[ty]);
+	    // io::eprintfn("tmp[0]: %s", tmp[0]);
 	}
     }
 }
@@ -43,8 +42,7 @@ fn int main() {
     caca::Canvas *cv;
     caca::Display *dp;
     caca::Event ev;
-    // static?
-    caca::Dither *dither;
+    static caca::Dither dither;
 
     dp = caca::create_display(null);
     if (!dp) return 1;
@@ -52,14 +50,16 @@ fn int main() {
 
     int width = caca::get_canvas_width(cv);
     int height = caca::get_canvas_height(cv);
+    io::eprintfn("width: %s", width);
+    io::eprintfn("height: %s", height);
 
-    static uint *screen;
-    static uint[256] red;
-    static uint[256] green;
-    static uint[256] blue;
-    static uint[256] alpha;
-    double[3] r;
-    double[6] big_r;
+    static CUInt *screen;
+    static CUInt[256] red;
+    static CUInt[256] green;
+    static CUInt[256] blue;
+    static CUInt[256] alpha;
+    static double[3] r;
+    static double[6] big_r;
 
     int i, x, y;
 
@@ -83,22 +83,30 @@ fn int main() {
 	    double tmp = (((double)((x - (TABLEX / 2)) * (x - (TABLEX / 2))
 	                            + (y - (TABLEX / 2)) * (y - (TABLEX / 2))))
 	                  * (math::PI / (TABLEX * TABLEX + TABLEY * TABLEY)));
-	    table[x + y * TABLEX] = (uint)(1.0 + math::sin(12.0 * math::sqrt(tmp))) * 256 / 6;
+	    table[x + y * TABLEX] = (CUInt)((1.0 + math::sin(12.0 * math::sqrt(tmp))) * 256 / 6);
+	    // io::eprintfn("table[x + y * TABLEX]: %s", table[x + y * TABLEX]);
 	}
     }
 
     /* Init */
-    screen = malloc(XSIZ * YSIZ * uint.sizeof);
+    screen = malloc(XSIZ * YSIZ * 8);
     dither = caca::create_dither(8, XSIZ, YSIZ, XSIZ, 0, 0, 0, 0);
 
     /* Update */
     while(!caca::get_event(dp, caca::EVENT_KEY_PRESS | caca::EVENT_QUIT, ev, 0)) {
 	for(i = 0; i < 256; i++) {
 	    double z = ((double)i) / 256 * 6 * math::PI;
-
-	    red[i] = (uint)(1.0 + math::sin(z + r[1] * frame)) / 2 * 0xfff;
-	    blue[i] = (uint)(1.0 + math::cos(z + r[0] * (double)(frame + 100))) / 2 * 0xfff;
-	    green[i] = (uint)(1.0 + math::cos(z + r[2] * (double)(frame + 200))) / 2 * 0xfff;
+	    // io::eprintfn("z: %s", z);
+	    red[i] = (CUInt)((1.0 + math::sin(z + r[1] * frame)) / 2 * 0xfff) % 256;
+	    blue[i] = (CUInt)((1.0 + math::cos(z + r[0] * (double)(frame + 100))) / 2 * 0xfff) % 256;
+	    green[i] = (CUInt)((1.0 + math::cos(z + r[2] * (double)(frame + 200))) / 2 * 0xfff) % 256;
+	    // io::eprintfn("r[1]: %s", r[1]);
+	    // io::eprintfn("r[0]: %s", r[0]);
+	    // io::eprintfn("r[2]: %s", r[2]);
+	    // io::eprintfn("1.0 + math::sin(z + r[1] * frame) / 2 * 0xfff: %s", (CUInt)((1.0 + math::sin(z + r[1] * frame)) / 2 * 0xfff) % 256);   
+	    // io::eprintfn("red[%d]: %s", i, red[i]);
+	    // io::eprintfn("green[%d]: %s", i, green[i]);
+	    // io::eprintfn("blue[%d]: %s", i, blue[i]);
 	}
 
 	// Increase frame count
@@ -106,7 +114,6 @@ fn int main() {
 
 	// Set the palette
 	caca::set_dither_palette(dither, &red, &green, &blue, &alpha);
-
 	// do plasma effect
 	do_plasma(screen,
                   (1.0 + math::sin(((double)frame) * big_r[0])) / 2,
@@ -122,7 +129,7 @@ fn int main() {
 	                    caca::get_canvas_height(cv),
 	                    dither, screen);
 	caca::refresh_display(dp);
-	thread::sleep(2000);
+	thread::sleep(20_000);
 	caca::clear_canvas(cv);
     }
     
