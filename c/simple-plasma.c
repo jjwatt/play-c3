@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <caca.h>
 #include <stdlib.h>
 #include <math.h>
@@ -51,19 +52,26 @@ int main() {
         for (int y = 0; y < YSIZ; y++) {
             for (int x = 0; x < XSIZ; x++) {
 		int value = (int)(((128 + (128 * sin(x / 32.0)))
-			     + (128 + (128 * cos(y / 32.0)))
-			     + (128 + (128 * sin(sqrt((x * x + y * y)) / 32.0)))) / 4);
+				   + (128 + (128 * cos(y / 32.0)))
+				   + (128 + (128 * sin(sqrt((x * x + y * y)) / 32.0))))
+				  / 4);
                 // Map noise to color (simple grayscale)
-                int gray = (int)(value * 255);
+                /* int gray = (int)(value * 255); */
                 /* pixels[y * XSIZ * 4 + x * 4 + 0] = gray; // Red */
                 /* pixels[y * XSIZ * 4 + x * 4 + 1] = gray; // Green */
                 /* pixels[y * XSIZ * 4 + x * 4 + 2] = gray; // Blue */
                 /* pixels[y * XSIZ * 4 + x * 4 + 3] = 0; // Alpha */
-		pixels[x + y * XSIZ + 0] = gray; // Red
-                pixels[x + y * XSIZ + 1] = gray; // Green
-                pixels[x + y * XSIZ + 2] = gray; // Blue
-                pixels[x + y * XSIZ + 3] = 0; // Alpha
+		pixels[x + y * XSIZ] = value;
+		/* fprintf(stderr, "pixels[%d] = %d\n", (x + y * XSIZ), value); */
 
+		/* pixels[x + y * XSIZ + 0] = value; // Red */
+		/* fprintf(stderr, "red pixel at pixels[%d]: %d\n", */
+		/* 	(x + y * XSIZ + 0), value); */
+                /* pixels[x + y * XSIZ + 1] = value;// Green */
+		/* fprintf(stderr, "green pixel at pixels[%d]: %d\n", */
+		/* 	(x + y * XSIZ + 1), value); */
+                /* pixels[x + y * XSIZ + 2] = value; // Blue */
+                /* pixels[x + y * XSIZ + 3] = 0; // Alpha */
             }
         }
 
