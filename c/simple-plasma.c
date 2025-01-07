@@ -19,13 +19,13 @@ int main() {
     int height = caca_get_canvas_height(cv);
     caca_dither_t *dither;
     
-    static uint32_t red[256], green[256], blue[256], alpha[256];
+    uint32_t red[256], green[256], blue[256], alpha[256];
     int frame = 0;
 
     // Seed the random number generator
     srand(time(NULL));
 
-    uint8_t *pixels = malloc(XSIZ * YSIZ * 4); // 4 bytes per pixel (RGBA)
+    unsigned char *pixels = malloc(XSIZ * YSIZ * 4); // 4 bytes per pixel (RGBA)
     dither = caca_create_dither(8, XSIZ, YSIZ, XSIZ, 0, 0, 0, 0);
 
     // Initialize rgba values with 0
