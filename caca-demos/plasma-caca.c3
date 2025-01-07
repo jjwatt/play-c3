@@ -4,10 +4,10 @@ import std::thread;
 import std::io;
 import caca;
 
-const uint XSIZ = 256;
-const uint YSIZ = 256;
-const uint TABLEX = XSIZ * 2;
-const uint TABLEY = YSIZ * 2;
+const usz XSIZ = 256;
+const usz YSIZ = 256;
+const usz TABLEX = XSIZ * 2;
+const usz TABLEY = YSIZ * 2;
 
 int frame;
 uint[TABLEX * TABLEY] table;
@@ -51,8 +51,8 @@ fn int main() {
 
     int width = caca::get_canvas_width(cv);
     int height = caca::get_canvas_height(cv);
-    io::eprintfn("width: %s", width);
-    io::eprintfn("height: %s", height);
+    // io::eprintfn("width: %s", width);
+    // io::eprintfn("height: %s", height);
 
     static uint *screen;
     static uint[256] red;

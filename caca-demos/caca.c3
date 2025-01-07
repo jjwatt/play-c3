@@ -29,7 +29,7 @@ extern fn CInt get_frame_count(Display*) @extern("caca_get_frame_count");
 extern fn CInt put_str(Canvas*, CInt, CInt, CChar*) @extern("caca_put_str");
 extern fn CInt put_char(Canvas*, CInt, CInt, uint) @extern("caca_put_char");
 extern fn Dither create_dither(CInt, CInt, CInt, CInt,
-                             CUInt, CUInt, CUInt, CUInt) @extern("caca_create_dither");
+                             uint, uint, uint, uint) @extern("caca_create_dither");
 extern fn CInt free_dither(Dither*) @extern("caca_free_dither");
-extern fn CInt set_dither_palette(Dither*, CUInt* r, CUInt* g, CUInt* b, uint* a) @extern("caca_set_dither_palette");
+extern fn CInt set_dither_palette(Dither*, uint* r, uint* g, uint* b, uint* a) @extern("caca_set_dither_palette");
 extern fn CInt dither_bitmap(Canvas*, CInt, CInt, CInt, CInt, Dither*, void*) @extern("caca_dither_bitmap");
