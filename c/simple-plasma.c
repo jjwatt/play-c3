@@ -61,8 +61,8 @@ int main() {
                 /* pixels[y * XSIZ * 4 + x * 4 + 3] = 0; // Alpha */
 		pixels[x + y * XSIZ + 0] = gray; // Red
                 pixels[x + y * XSIZ + 1] = gray; // Green
-                pixels[x + y * XSIZ * 2] = gray; // Blue
-                pixels[x + y * XSIZ * 3] = 0; // Alpha
+                pixels[x + y * XSIZ + 2] = gray; // Blue
+                pixels[x + y * XSIZ + 3] = 0; // Alpha
 
             }
         }
