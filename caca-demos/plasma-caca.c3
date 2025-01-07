@@ -12,7 +12,7 @@ const usz TABLEY = YSIZ * 2;
 int frame;
 uint[TABLEX * TABLEY] table;
 
-fn void do_plasma(uint *pixels, double x_1, double y_1, double x_2, double y_2,
+fn void do_plasma(char *pixels, double x_1, double y_1, double x_2, double y_2,
                   double x_3, double y_3) {
     uint x1 = (uint)(x_1 * (TABLEX / 2));
     uint y1 = (uint)(y_1 * (TABLEY / 2));
@@ -27,12 +27,12 @@ fn void do_plasma(uint *pixels, double x_1, double y_1, double x_2, double y_2,
     // io::eprintfn("Coordinates: (%d,%d) (%d,%d) (%d,%d)", 
     // 		 x1, y1, x2, y2, x3, y3);
     for(uint y = 0; y < YSIZ; y++) {
-	uint *tmp = pixels + y * YSIZ;
+	char *tmp = (pixels + y * YSIZ);
 	uint ty = y * TABLEX;
 	uint tmax = ty + XSIZ;
 	for(uint x = 0; ty < tmax; ty++, tmp++) {
 	    // io::eprintfn("t1[ty]: %s", t1[ty]);
-	    tmp[0] = (t1[ty] + t2[ty] + t3[ty]);
+	    tmp[0] = (char)(t1[ty] + t2[ty] + t3[ty]);
 	    // io::eprintfn("tmp[0]: %s", tmp[0]);
 	    // io::eprintfn("pixels: %s", pixels[ty]);
 	}
@@ -54,7 +54,7 @@ fn int main() {
     // io::eprintfn("width: %s", width);
     // io::eprintfn("height: %s", height);
 
-    static uint *screen;
+    static char *screen;
     static uint[256] red;
     static uint[256] green;
     static uint[256] blue;
@@ -90,7 +90,7 @@ fn int main() {
     }
 
     /* Init */
-    screen = malloc(XSIZ * YSIZ * uint.sizeof);
+    screen = malloc(XSIZ * YSIZ * char.sizeof);
     dither = caca::create_dither(8, XSIZ, YSIZ, XSIZ, 0, 0, 0, 0);
 
     /* Update */
