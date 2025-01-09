@@ -93,6 +93,7 @@ int main() {
 			     caca_get_canvas_height(cv),
 			     dither, screen);
 	  caca_refresh_display(dp);
+	  usleep(20000);
 	}
 
 	caca_free_dither(dither);
