@@ -14,5 +14,7 @@ fn void main(String[] args)
     // Optional too:
     int! returned_optional = test(optional_argument);
 
-    io::printfn("returned_optional: %d", returned_optional)!!;
+    if (try returned_optional) {
+	io::printfn("returned_optional: %d", returned_optional);
+    }
 }
