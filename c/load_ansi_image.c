@@ -19,19 +19,14 @@ int main() {
     return 1;
   }
 
-  // 3. Get the dimensions of the imported canvas
   int width = caca_get_canvas_width(imported_cv);
   int height = caca_get_canvas_height(imported_cv);
 
-  // 4. Resize the main canvas and blit the imported canvas onto it
-  // caca_set_canvas_size(cv, width, height);
   caca_blit(cv, 0, 0, imported_cv, NULL);
 
-  // 5. Display and wait for a key press
   caca_refresh_display(dp);
   caca_get_event(dp, CACA_EVENT_KEY_PRESS, NULL, -1);
 
-  // 6. Clean up
   caca_free_canvas(imported_cv); // Free the imported canvas
   caca_free_canvas(cv);
   caca_free_display(dp);
