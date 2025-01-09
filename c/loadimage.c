@@ -22,7 +22,7 @@ int main() {
 
   // 2. Load the image using Imlib2
   Imlib_Image image;
-  image = imlib_load_image("reply.jpg"); // Replace with your image path
+  image = imlib_load_image("output.jpg"); // Replace with your image path
   if (!image) {
     fprintf(stderr, "Error loading image with Imlib2\n");
     caca_free_display(dp);
