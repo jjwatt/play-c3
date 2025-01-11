@@ -25,7 +25,7 @@ int main() {
 // Load the file
   caca_canvas_t *imported_cv = caca_create_canvas(0, 0);
   ssize_t size = caca_import_canvas_from_file(imported_cv, "reply.caca", "caca");
-  if (!imported_cv) {
+  if (!size) {
     fprintf(stderr, "Error importing ANSI file\n");
     caca_free_display(dp);
     caca_free_canvas(cv);
@@ -34,16 +34,8 @@ int main() {
   int imported_width = caca_get_canvas_width(imported_cv);
   int imported_height = caca_get_canvas_height(imported_cv);
 
-  // Create a new canvas for rendering
-  caca_canvas_t *render_cv = caca_create_canvas(width, height);
-  static caca_dither_t *dither;
-  static uint32_t *screen;
-  screen = (uint32_t*) malloc(width * height * sizeof(uint32_t));
-
   static int cos_tab[TABLE_SIZE];
   static int sin_tab[TABLE_SIZE];
-
-  uint32_t *screen_buffer_ptr;       // Pointer to traverse the screen buffer
 
   static int angle_fixed;             // Rotation angle (fixed-point)
   static int time_fixed;              // Time variable for animation (fixed-point)
@@ -71,21 +63,9 @@ int main() {
       sin_tab[x] = TOFIX(sin(x * (360.0f / (float)TABLE_SIZE)));
   }
 
-  /* Init */
-  dither = caca_create_dither(32, width, height, width * 4,
-			      0x00FF0000,
-			      0x0000FF00,
-			      0x000000FF,
-			      0x00000000);
-
-
   while (!caca_get_event(dp, CACA_EVENT_KEY_PRESS | CACA_EVENT_QUIT, &ev, 0)) {
-    // blit imported canvas onto rendering canvas
-    // caca_blit(render_cv, 0, 0, imported_cv, NULL);
-
-    // Export the canvas area to memory buffer
-    size_t buffer_size;
-    void *buffer = caca_export_canvas_to_memory(imported_cv, "caca", &buffer_size);
+    // create temporary canvas for writing to
+    caca_canvas_t *temp_cv = caca_create_canvas(width, height);
 
     angle_fixed += 4;
     time_fixed += 3;
@@ -94,10 +74,6 @@ int main() {
     y_transform_fixed    = FMUL(sin_tab[(angle_fixed) & 0xFFFF], scale_fixed);
     texture_u_fixed  = texture_v_fixed  = 0;
     prev_texture_u_fixed = prev_texture_v_fixed = 0;
-    screen_buffer_ptr = screen;
-
-    // Access pixel data from the buffer
-    uint32_t *pixels = (uint32_t *) buffer;
 
     for (y_coord = 0; y_coord < height; y_coord++) {
       for (x_coord = 0; x_coord < width; x_coord++) {
@@ -111,31 +87,26 @@ int main() {
 	texture_u_int = (texture_u_int % imported_width + imported_width) % imported_width;
 	texture_v_int = (texture_v_int % imported_height + imported_height) % imported_height;
 
-	// Access the pixel using texture_u_int and texture_v_int
-	*screen_buffer_ptr++ = pixels[texture_v_int * imported_width + texture_u_int];
+	// Get the character and attributes from the imported canvas
+	uint32_t ch = caca_get_char(imported_cv, texture_u_int, texture_v_int);
+	uint32_t attr = caca_get_attr(imported_cv, texture_u_int, texture_v_int);
+
+	// Put the character and attributes on the temporary canvas
+	caca_put_char(temp_cv, x_coord, y_coord, ch);
+	caca_put_attr(temp_cv, x_coord, y_coord, attr);
       }
       texture_u_fixed = prev_texture_u_fixed -= y_transform_fixed;
       texture_v_fixed = prev_texture_v_fixed += x_transform_fixed;
     }
-    /* caca_blit(cv, (cv_width/2) - img_width/2, cv_height/2 - img_height/2, imported_cv, NULL); */
-    free(buffer);
     caca_clear_canvas(cv);
+    // blit rendered canvas
+    caca_blit(cv, 0, 0, temp_cv, NULL);
 
-    // Render the screen buffer to the canvas
-    caca_dither_bitmap(cv, 0, 0,
-		       width,
-		       height,
-		       dither, screen);
+    caca_free_canvas(temp_cv);
 
-    // blit the rendered canvas to the display canvas
-    // caca_blit(cv, 0, 0, render_cv, NULL);
     caca_refresh_display(dp);
-    usleep(20000);
+    usleep(50000);
   }
-  caca_free_dither(dither);
-  free(screen);
-  caca_free_canvas(imported_cv);
-  caca_free_canvas(render_cv);
   caca_free_canvas(cv);
   caca_free_display(dp);
   return 0;
