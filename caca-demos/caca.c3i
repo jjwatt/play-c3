@@ -11,6 +11,7 @@ def Canvas = void*;
 def Event = void*;
 def Dither = void*;
 
+extern fn Canvas create_canvas(CInt, CInt) @extern("caca_create_canvas");
 extern fn Display create_display(Canvas*) @extern("caca_create_display");
 extern fn CInt free_display(Display*) @extern("caca_free_display");
 extern fn Canvas get_canvas(Display*) @extern("caca_get_canvas");
@@ -35,3 +36,7 @@ extern fn CInt free_dither(Dither*) @extern("caca_free_dither");
 extern fn CInt set_dither_palette(Dither*, uint* r, uint* g, uint* b, uint* a) @extern("caca_set_dither_palette");
 extern fn CInt dither_bitmap(Canvas*, CInt, CInt, CInt, CInt, Dither*, void*) @extern("caca_dither_bitmap");
 extern fn usz import_canvas_from_file(Canvas*, char*, char*) @extern("caca_import_canvas_from_file");
+extern fn uint get_attr(Canvas*, CInt, CInt) @extern("caca_get_attr");
+extern fn CInt set_attr(Canvas*, uint) @extern("caca_set_attr");
+extern fn CInt put_attr(Canvas*, CInt, CInt, uint) @extern("caca_put_attr");
+extern fn CInt blit(Canvas*, CInt, CInt, Canvas*, Canvas*) @extern("caca_blit");
