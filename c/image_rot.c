@@ -69,7 +69,11 @@ int main() {
 
     angle_fixed += 4;
     time_fixed += 3;
+    /* int temp = sin_tab[time_fixed & 0xFFFF] + TOFIX(0.5); */
+    /* scale_fixed = FMUL(temp, temp) + TOFIX(5); */
+    /* scale_fixed = FMUL(sin_tab[time_fixed & 0xFFFF] - TOFIX(0.5), TOFIX(3)) + (TOFIX(4)); */
     scale_fixed = FMUL(sin_tab[time_fixed & 0xFFFF], TOFIX(3)) + (TOFIX(4));
+    /* fprintf(stderr, "scale_fixed: %d\n", scale_fixed); */
     x_transform_fixed    = FMUL(cos_tab[(angle_fixed) & 0xFFFF], scale_fixed);
     y_transform_fixed    = FMUL(sin_tab[(angle_fixed) & 0xFFFF], scale_fixed);
     texture_u_fixed  = texture_v_fixed  = 0;
