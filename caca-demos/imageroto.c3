@@ -7,16 +7,16 @@ import caca;
 const int TABLE_SIZE = 65536;
 const int PRECISION = 8;
 
-fn int tofix(float a) {
-    return ((int)( (a)*(double)(1<<PRECISION)));
+macro @tofix(#a) {
+    return ((int)( (#a)*(double)(1<<PRECISION)));    
 }
 
-fn int fmul(int a, int b) {
-    return (a * b) >> PRECISION;
+macro @fmul(#a, #b) {
+    return (#a * #b) >> PRECISION;
 }
 
-fn int toint(uint a) {
-    return (a>>PRECISION);
+macro @toint(#a) {
+    return (#a>>PRECISION);
 }
 
 fn int main() {
@@ -45,27 +45,27 @@ fn int main() {
     int imported_width = caca::get_canvas_width(imported_cv);
     int imported_height = caca::get_canvas_height(imported_cv);
 
-    int [TABLE_SIZE]cos_tab;
-    int [TABLE_SIZE]sin_tab;
+    static int [TABLE_SIZE]cos_tab;
+    static int [TABLE_SIZE]sin_tab;
 
-    int angle_fixed;
-    int time_fixed;
+    static int angle_fixed;
+    static int time_fixed;
     int scale_fixed;
     uint x_coord, y_coord;
-    int x_transform_fixed;
-    int y_transform_fixed;
-    int texture_u_fixed;
-    int texture_v_fixed;
-    int prev_texture_u_fixed;
-    int prev_texture_v_fixed;
+    uint x_transform_fixed;
+    uint y_transform_fixed;
+    uint texture_u_fixed;
+    uint texture_v_fixed;
+    uint prev_texture_u_fixed;
+    uint prev_texture_v_fixed;
 
     uint texture_u_int;
     uint texture_v_int;
 
       /* Prepare */
     for(int x = 0; x < TABLE_SIZE; x++) {
-	cos_tab[x] = tofix(math::cos(x * (360.0f / (float)TABLE_SIZE)));
-	sin_tab[x] = tofix(math::sin(x * (360.0f / (float)TABLE_SIZE)));
+	cos_tab[x] = @tofix(math::cos(x * (360.0f / (float)TABLE_SIZE)));
+	sin_tab[x] = @tofix(math::sin(x * (360.0f / (float)TABLE_SIZE)));
     }
     // for (int i = 0; i < 10; ++i) {
     // 	io::eprintfn("sin_tab[%d]: %d", i, sin_tab[i]);
@@ -78,10 +78,10 @@ fn int main() {
 	angle_fixed += 4;
 	time_fixed += 3;
 
-	scale_fixed = fmul(sin_tab[time_fixed & 0xFFFF], tofix(3)) + (tofix(4));
+	scale_fixed = @fmul(sin_tab[time_fixed & 0xFFFF], @tofix(3)) + (@tofix(4));
 
-	x_transform_fixed = fmul(cos_tab[(angle_fixed) & 0xFFFF], scale_fixed);
-	y_transform_fixed = fmul(sin_tab[(angle_fixed) & 0xFFFF], scale_fixed);
+	x_transform_fixed = @fmul(cos_tab[(angle_fixed) & 0xFFFF], scale_fixed);
+	y_transform_fixed = @fmul(sin_tab[(angle_fixed) & 0xFFFF], scale_fixed);
 	// io::eprintfn("scale_fixed: %d", scale_fixed);
 
 	for (y_coord = 0; y_coord < height; y_coord++) {
@@ -89,8 +89,8 @@ fn int main() {
 		texture_u_fixed += x_transform_fixed;
 		texture_v_fixed += y_transform_fixed;
 
-		texture_u_int = toint(texture_u_fixed);
-		texture_v_int = toint(texture_v_fixed);
+		texture_u_int = @toint(texture_u_fixed);
+		texture_v_int = @toint(texture_v_fixed);
 
 		// Ensure texture_u_int and texture_v_int are within bounds of the imported image
 		texture_u_int = (texture_u_int % imported_width + imported_width) % imported_width;
@@ -111,7 +111,7 @@ fn int main() {
 	caca::blit(cv, 0, 0, temp_cv, null);
 	caca::free_canvas(temp_cv);
 	caca::refresh_display(dp);
-	thread::sleep(50000);
+	thread::sleep(80_000);
     }
     return 0;
 }
