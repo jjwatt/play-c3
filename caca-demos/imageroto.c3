@@ -70,10 +70,10 @@ fn int main() {
     // for (int i = 0; i < 10; ++i) {
     // 	io::eprintfn("sin_tab[%d]: %d", i, sin_tab[i]);
     // }
+    // create a temporary canvas for writing to
+    caca::Canvas *temp_cv = caca::create_canvas(width, height);
 
     while (!caca::get_event(dp, caca::EVENT_KEY_PRESS | caca::EVENT_QUIT, ev, 0)) {
-	// create a temporary canvas for writing to
-	caca::Canvas *temp_cv = caca::create_canvas(width, height);
 
 	angle_fixed += 4;
 	time_fixed += 3;
@@ -109,9 +109,9 @@ fn int main() {
 	}
 	caca::clear_canvas(cv);
 	caca::blit(cv, 0, 0, temp_cv, null);
-	caca::free_canvas(temp_cv);
 	caca::refresh_display(dp);
-	thread::sleep(80_000);
+	thread::sleep(50_000);
     }
+    caca::free_canvas(temp_cv);
     return 0;
 }
