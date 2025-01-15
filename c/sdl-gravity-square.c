@@ -5,12 +5,6 @@
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 
-struct Square {
-    int width;
-    int height;
-    int x;
-    int y;
-};
 
 int main(int argc, char* argv[])
 {
@@ -20,7 +14,9 @@ int main(int argc, char* argv[])
 	return 1;
     }
 
-    struct Square square = { 100, 100, (WINDOW_WIDTH / 2) - 50, (WINDOW_HEIGHT / 2) - 10 };
+    SDL_Rect square = { .x = (WINDOW_WIDTH / 2) - 50, .y = (WINDOW_HEIGHT / 2) - 10,
+			.w = 100,
+			.h = 100};
 
     // Velocity
     float dx = 4.0f;
@@ -30,7 +26,7 @@ int main(int argc, char* argv[])
     const float gravity = 0.5f;
 
     // energy loss on collision; 1.0 = no loss, 0.0 = total loss
-    const float damping = 0.8f;
+    const float damping = 0.8;
     // horizontal speed decay
     const float air_resistance = 0.995f;
 
@@ -69,10 +65,10 @@ int main(int argc, char* argv[])
 	square.y += dy;
 
 	// Handle collisions with bounds
-	if (square.x >= WINDOW_WIDTH - square.width || square.x <= 0) {
+	if (square.x >= WINDOW_WIDTH - square.w || square.x <= 0) {
 	    // Bounce off wall with some energy loss.
-	    if (square.x >= WINDOW_WIDTH - square.width) {
-		square.x = WINDOW_WIDTH - square.width;
+	    if (square.x >= WINDOW_WIDTH - square.w) {
+		square.x = WINDOW_WIDTH - square.w;
 	    }
 	    if (square.x <= 0) {
 		square.x = 0;
@@ -81,10 +77,10 @@ int main(int argc, char* argv[])
 	    // TODO: change to random color here
 	}
 
-	if (square.y >= WINDOW_HEIGHT - square.height || square.y <= 0) {
+	if (square.y >= WINDOW_HEIGHT - square.h || square.y <= 0) {
 	    // Bounce off floor/ceiling with some energy loss.
-	    if (square.y >= WINDOW_HEIGHT - square.height) {
-		square.y = WINDOW_HEIGHT - square.height;
+	    if (square.y >= WINDOW_HEIGHT - square.h) {
+		square.y = WINDOW_HEIGHT - square.h;
 		// Only bounce if moving fast enough.
 		if (dy >= 0.5f) {
 		    dy *= -damping;
@@ -106,11 +102,11 @@ int main(int argc, char* argv[])
 	/* 	     WINDOW_HEIGHT / 4, */
 	/* 	     WINDOW_WIDTH / 2, */
 	/* 	     WINDOW_HEIGHT / 2}; */
-	SDL_Rect fillRect = { square.x, square.y, square.width, square.height };
+	/* SDL_Rect fillRect = { square.x, square.y, square.width, square.height }; */
 
 	// Draw red filled square
 	SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);  // Red
-	SDL_RenderFillRect(renderer, &fillRect);
+	SDL_RenderFillRect(renderer, &square);
 
 	// Update screen
 	SDL_RenderPresent(renderer);
