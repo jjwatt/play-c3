@@ -18,11 +18,15 @@ int main(int argc, char* argv[])
 					  WINDOW_WIDTH,
 					  WINDOW_HEIGHT,
 					  SDL_WINDOW_SHOWN);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    SDL_Surface* screenSurface = SDL_GetWindowSurface(window);
+    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    /* SDL_Surface* screenSurface = SDL_GetWindowSurface(window); */
     SDL_Event e;
 
     bool quit = false;
+
+    SDL_Rect fillRect = { WINDOW_WIDTH / 4, WINDOW_HEIGHT / 4, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2};
 
     while (!quit) {
 	while (SDL_PollEvent(&e) != 0) {
@@ -30,12 +34,21 @@ int main(int argc, char* argv[])
 		quit = true;
 	    }
 	}
+	// Clear screen
+	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);  // White
+	SDL_RenderClear(renderer);
 
-	SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0xFF, 0xFF));
-	SDL_UpdateWindowSurface(window);
+	// Draw red filled square
+	SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);  // Red
+	SDL_RenderFillRect(renderer, &fillRect);
+
+	// Update screen
+	SDL_RenderPresent(renderer);
     }
 
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+
     return 0;
 }
