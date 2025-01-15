@@ -4,5 +4,8 @@ hello-caca: hello-caca.c
 loadimage3: loadimage3.c
 	gcc loadimage3.c -O3 -o loadimage3 -lcaca -lImlib2
 
+hello-sdl: hello-sdl.c
+	gcc hello-sdl.c -I/opt/homebrew/include -L/opt/homebrew/lib -lSDL2 -o ./hello-sdl
+
 %: %.c
 	gcc -O3 $< -o $@ -lcaca -lm
