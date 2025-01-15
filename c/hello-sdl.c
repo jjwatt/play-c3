@@ -4,6 +4,7 @@
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 
+
 int main(int argc, char* argv[])
 {
     // SDL Initialization

@@ -7,5 +7,8 @@ loadimage3: loadimage3.c
 hello-sdl: hello-sdl.c
 	gcc hello-sdl.c -I/opt/homebrew/include -L/opt/homebrew/lib -lSDL2 -o ./hello-sdl
 
+sdl-gravity-square: sdl-gravity-square.c
+	gcc sdl-gravity-square.c -I/opt/homebrew/include -L/opt/homebrew/lib -lSDL2 -o ./sdl-gravity-square
+
 %: %.c
 	gcc -O3 $< -o $@ -lcaca -lm
