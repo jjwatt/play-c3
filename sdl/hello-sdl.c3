@@ -17,6 +17,11 @@ fn void! main()
 
     sdl::Renderer* renderer = sdl::createRenderer(window, -1,
 						  (uint)sdl::RENDERER_ACCELERATED);
+    defer {
+	sdl::destroyRenderer(renderer);
+	sdl::destroyWindow(window);
+    }
+
     sdl::Event e;
 
     bool quit = false;
@@ -42,7 +47,5 @@ fn void! main()
 	// Update screen
 	sdl::renderPresent(renderer);
     }
-    sdl::destroyRenderer(renderer);
-    sdl::destroyWindow(window);
     sdl::quit();
 }
