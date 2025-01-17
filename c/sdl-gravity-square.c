@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     const float gravity = 0.5f;
 
     // energy loss on collision; 1.0 = no loss, 0.0 = total loss
-    const float damping = 0.8;
+    const float damping = 0.8f;
     // horizontal speed decay
     const float air_resistance = 0.995f;
 
