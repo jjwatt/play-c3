@@ -3,6 +3,7 @@ hello-caca: hello-caca.c
 
 loadimage3: loadimage3.c
 	gcc loadimage3.c -O3 -o loadimage3 -lcaca -lImlib2
+# TODO: Make these buiild right on macOS and Linux
 
 hello-sdl: hello-sdl.c
 	gcc hello-sdl.c -I/opt/homebrew/include -L/opt/homebrew/lib -lSDL2 -o ./hello-sdl
