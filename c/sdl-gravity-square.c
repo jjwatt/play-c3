@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     const float gravity = 0.5f;
 
     // energy loss on collision; 1.0 = no loss, 0.0 = total loss
-    const float damping = 0.8f;
+    const float damping = 0.9f;
     // horizontal speed decay
     const float air_resistance = 0.995f;
 
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
 
 	// Update screen
 	SDL_RenderPresent(renderer);
-	usleep(50000);
+	usleep(20000);
     }
 
     SDL_DestroyRenderer(renderer);

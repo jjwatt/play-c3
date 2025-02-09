@@ -13,9 +13,6 @@ hello-sdl: hello-sdl.c
 sdl-gravity-square: sdl-gravity-square.c
 	gcc sdl-gravity-square.c $(CFLAGS) -Ofast $(LDFLAGS) -o ./sdl-gravity-square
 
-sdl-plasma: sdl-plasma.cc
-	g++ -std=c++20 -Wall -Wextra -pedantic -Ofast sdl-plasma.cc $(CFLAGS) $(LDFLAGS) -o sdl-plasma
-
 # TODO: Fix this so it works on macOS, too
 hello-caca: hello-caca.c
 	gcc hello-caca.c -o hello-caca -lcaca
