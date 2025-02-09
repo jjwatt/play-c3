@@ -73,7 +73,8 @@ int main(void)
 
     double start_x = screen_width / 2;
     double start_y = screen_height / 2;
-    
+
+    // TODO: Array of squares
     Square square(100.0, 100.0);
 
     // Initial square velocity
@@ -91,10 +92,10 @@ int main(void)
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distrib(0, 255);
 
-    // Setup Red Square
-    Uint8 Red = {255};
-    Uint8 Green = {0};
-    Uint8 Blue = {0};
+    // Setup first square color
+    Uint8 Red = distrib(gen);
+    Uint8 Green = distrib(gen);
+    Uint8 Blue = distrib(gen);
 
     while (!quit) {
 	while (SDL_PollEvent(&e) != 0) {
