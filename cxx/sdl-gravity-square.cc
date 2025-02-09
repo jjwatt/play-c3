@@ -46,6 +46,23 @@ struct World {
     World() = default;
 };
 
+struct Color {
+    Uint8 r, g, b, a;
+};
+
+void set_random_color(Color& color)
+{
+    // Setup random number generator for colors
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> distrib(0, 255);
+
+    color.r = distrib(gen);
+    color.g = distrib(gen);
+    color.b = distrib(gen);
+    color.a = 0xff;
+}
+
 int main(void)
 {
     constexpr int screen_width {640};
@@ -87,15 +104,9 @@ int main(void)
 
     World world{};
 
-    // Setup random number generator for colors
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distrib(0, 255);
-
     // Setup first square color
-    Uint8 Red = distrib(gen);
-    Uint8 Green = distrib(gen);
-    Uint8 Blue = distrib(gen);
+    Color color;
+    set_random_color(color);
 
     while (!quit) {
 	while (SDL_PollEvent(&e) != 0) {
@@ -108,7 +119,7 @@ int main(void)
 	SDL_RenderClear(renderer);
 
 	// Set square color
-	SDL_SetRenderDrawColor(renderer, Red, Green, Blue, 0xff);
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 
 	// Apply gravity
 	square.velocity.y += world.gravity;
@@ -137,9 +148,7 @@ int main(void)
 	    // Bounce off wall with some energy loss
 	    square.velocity.x *= -world.damping;
 	    // Change to random color
-	    Red = distrib(gen);
-	    Green = distrib(gen);
-	    Blue = distrib(gen);
+	    set_random_color(color);
 	}
 	
 	if (on_floor) {
@@ -148,10 +157,7 @@ int main(void)
 	    if (square.velocity.y > 0.5) {
 		square.velocity.y *= -world.damping;
 		// Change to random color
-		Red = distrib(gen);
-		Green = distrib(gen);
-		Blue = distrib(gen);
-
+		set_random_color(color);
 	    } else {
 		square.velocity.y = 0;
 		// Ground friction
@@ -162,11 +168,8 @@ int main(void)
 	    // Bounce off the ceiling w/o loss
 	    square.y = 0;
 	    square.velocity.y *= -world.damping;
-	    SDL_SetRenderDrawColor(renderer,
-				   distrib(gen),
-				   distrib(gen),
-				   distrib(gen),
-				   255);
+	    // Change to random color
+	    set_random_color(color);
 	}
 	// Draw
 	SDL_Rect rect = { .x = static_cast<int>(square.x),
