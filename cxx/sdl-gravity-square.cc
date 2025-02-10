@@ -34,9 +34,7 @@ struct Color {
 
 };
 
-// TODO: Add set_color function that takes a Color
-// TODO: Add set_random_color function to this class
-class Square
+class OldSquare
 {
 public:
     // TODO: Make width and height a Vec2, dimensions
@@ -49,19 +47,19 @@ public:
     Vec2 velocity {};
     Color color {};
 
-    Square() = default;
-    Square(double w, double h, double x_pos, double y_pos, Vec2 v)
+    OldSquare() = default;
+    OldSquare(double w, double h, double x_pos, double y_pos, Vec2 v)
 	: width {w}
 	, height {h}
 	, x {x_pos}
 	, y {y_pos}
 	, velocity {v} {}
-    Square(double w, double h)
+    OldSquare(double w, double h)
 	: width {w}
 	, height {h} {}
 };
 
-class Square2
+class Square
 {
 private:
     Vec2 m_size {10.0, 10.0};
@@ -70,21 +68,47 @@ private:
     Color m_color {};
 
 public:
-    Square2() = default;
-    Square2(Vec2 size, Vec2 pos, Vec2 v)
+    Square() = default;
+    Square(Vec2 size, Vec2 pos, Vec2 v)
 	: m_size {size}
 	, m_position {pos}
 	, m_velocity {v} {}
-    Square2(Vec2 size)
+    Square(Vec2 size)
 	: m_size {size} {}
     Vec2 size() const { return m_size; }
     void setSize(Vec2 size) { m_size = size; }
     Vec2 position() const { return m_position; }
     void setPos(Vec2 pos) { m_position = pos; }
+    void setPosX(double x) { m_position.x = x; }
+    void setPosY(double y) { m_position.y = y; }
     Vec2 velocity() const { return m_velocity; }
     void setVelocity(Vec2 velocity) { m_velocity = velocity; }
     Color color() const { return m_color; }
     void setColor(Color color) { m_color = color; }
+
+    void applyGravity(double gravity)
+    {
+	m_velocity.y += gravity;
+    }
+
+    void applyAirResistance(double air_resistance)
+    {
+	m_velocity.x *= air_resistance;
+    }
+
+    void dampX(double damping) {
+	m_velocity.x *= -damping;
+    }
+
+    void dampY(double damping) {
+	m_velocity.y *= -damping;
+    }
+
+    void updatePosition()
+    {
+	m_position.x += m_velocity.x;
+	m_position.y += m_velocity.y;
+    }
 };
 
 struct World {
@@ -150,12 +174,9 @@ int main(void)
 
     // TODO: Array of squares
     // TODO: Random velocity for each square
-    Square square(100.0,
-		  100.0,
-		  screen_width / 2,
-		  screen_height / 2,
-		  Vec2 {3.0, 0.0});
-
+    Square square({100.0, 100.0},
+		  {screen_width / 2, screen_height / 2},
+		  {3.0, 0.0});
     World world{};
 
     // TODO: Put color in the square
@@ -189,60 +210,58 @@ int main(void)
 			       square_color.alpha);
 
 	// Apply gravity
-	square.velocity.y += world.gravity;
+	square.applyGravity(world.gravity);
 	// Apply air resistance to horizontal movement
-	square.velocity.x *= world.air_resistance;
+	square.applyAirResistance(world.air_resistance);
 
 	// Update position
-	square.x += square.velocity.x;
-	square.y += square.velocity.y;
+	square.updatePosition();
 
 	// Handle collisions
-	bool on_right_wall = (square.x >= screen_width - square.width);
-	bool on_left_wall = (square.x <= 0);
+	bool on_right_wall = (square.position().x >= screen_width - square.size().x);
+	bool on_left_wall = (square.position().x <= 0);
 	bool on_wall = (on_right_wall || on_left_wall);
-	bool on_floor = (square.y >= screen_height - square.height);
-	bool on_ceiling = (square.y <= 0);
-	
+	bool on_floor = (square.position().y >= screen_height - square.size().y);
+	bool on_ceiling = (square.position().y <= 0);
+
 	if (on_wall) {
 	    // Reset x on boundries
 	    if (on_left_wall) {
-		square.x = 0;
+		square.setPosX(0);
 	    }
 	    if (on_right_wall) {
-		square.x = screen_width - square.width;
+		square.setPosX(screen_width - square.size().x);
 	    }
 	    // Bounce off wall with some energy loss
-	    square.velocity.x *= -world.damping;
+	    square.dampX(world.damping);
 	    // Change to random color
 	    set_random_color(square_color);
 	}
-	
+
 	if (on_floor) {
-	    square.y = screen_height - square.height;
+	    square.setPosY(screen_height - square.size().y);
 	    // Only bounce if moving fast enough
-	    if (square.velocity.y > 0.5) {
-		square.velocity.y *= -world.damping;
+	    if (square.velocity().y > 0.5) {
+		square.dampY(world.damping);
 		// Change to random color
 		set_random_color(square_color);
 	    } else {
-		square.velocity.y = 0;
 		// Ground friction
-		square.velocity.x *= 0.95;
+		square.setVelocity({square.velocity().x * 0.95, 0});
 	    }
 	}
 	if (on_ceiling) {
 	    // Bounce off the ceiling w/o loss
-	    square.y = 0;
-	    square.velocity.y *= -world.damping;
+	    square.setPosY(0);
+	    square.dampY(world.damping);
 	    // Change to random color
 	    set_random_color(square_color);
 	}
 	// Draw
-	SDL_Rect rect = { .x = static_cast<int>(square.x),
-			  .y = static_cast<int>(square.y),
-			  .w = static_cast<int>(square.width),
-			  .h = static_cast<int>(square.height) };
+	SDL_Rect rect = { .x = static_cast<int>(square.position().x),
+			  .y = static_cast<int>(square.position().y),
+			  .w = static_cast<int>(square.size().x),
+			  .h = static_cast<int>(square.size().y) };
 	SDL_RenderFillRect(renderer, &rect);
 
 	// Update the screen
