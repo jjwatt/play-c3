@@ -30,10 +30,8 @@ struct Color {
 	, blue {b}
 	, alpha(a) {}
     Color(Uint8 r, Uint8 g, Uint8 b)
-	: red {r}
-	, green {g}
-	, blue {b}
-	, alpha {0xff} {}
+	: Color(r, g, b, 0xff) {}
+
 };
 
 struct Square {
@@ -42,7 +40,8 @@ struct Square {
     double x {0.0};
     double y {0.0};
     Vec2 velocity {};
-    Color color {};
+    // TODO: Add color here
+    // Color color {};
 
     Square() = default;
     Square(double w, double h, double x_pos, double y_pos, Vec2 v)
@@ -82,21 +81,22 @@ int main(void)
     constexpr int screen_width {640};
     constexpr int screen_height {480};
 
-    SDL_Window *window = nullptr;
-    SDL_Renderer *renderer = nullptr;
-
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 	SDL_Log("SDL_Init Error: %s\n", SDL_GetError());
 	return 1;
     }
 
-    window = SDL_CreateWindow("Gravity Square SDL C++",
+    // SDL_Window *window = nullptr;
+    // SDL_Renderer *renderer = nullptr;
+    auto window = SDL_CreateWindow("Gravity Square SDL C++",
 			      SDL_WINDOWPOS_UNDEFINED,
 			      SDL_WINDOWPOS_UNDEFINED,
 			      screen_width,
 			      screen_height,
 			      SDL_WINDOW_SHOWN);
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    auto renderer = SDL_CreateRenderer(window,
+				       -1,
+				       SDL_RENDERER_ACCELERATED);
 
     // Create an event handler and a quit flag
     SDL_Event e{};
