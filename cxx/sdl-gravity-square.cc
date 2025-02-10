@@ -39,13 +39,16 @@ struct Color {
 class Square
 {
 public:
+    // TODO: Make width and height a Vec2, dimensions
     double width {10.0};
     double height {10.0};
+    // TODO: Make x and y a Vec2, position
     double x {0.0};
     double y {0.0};
+    Vec2 position {};
     Vec2 velocity {};
     Color color {};
-    
+
     Square() = default;
     Square(double w, double h, double x_pos, double y_pos, Vec2 v)
 	: width {w}
@@ -56,10 +59,32 @@ public:
     Square(double w, double h)
 	: width {w}
 	, height {h} {}
-    double getWidth() const { return width; }
-    void setWidth(double w) { width = w; }
-    double getHeight() const { return height; }
-    void setHeight(double h) { height = h; }
+};
+
+class Square2
+{
+private:
+    Vec2 m_size {10.0, 10.0};
+    Vec2 m_position {0.0, 0.0};
+    Vec2 m_velocity {};
+    Color m_color {};
+
+public:
+    Square2() = default;
+    Square2(Vec2 size, Vec2 pos, Vec2 v)
+	: m_size {size}
+	, m_position {pos}
+	, m_velocity {v} {}
+    Square2(Vec2 size)
+	: m_size {size} {}
+    Vec2 size() const { return m_size; }
+    void setSize(Vec2 size) { m_size = size; }
+    Vec2 position() const { return m_position; }
+    void setPos(Vec2 pos) { m_position = pos; }
+    Vec2 velocity() const { return m_velocity; }
+    void setVelocity(Vec2 velocity) { m_velocity = velocity; }
+    Color color() const { return m_color; }
+    void setColor(Color color) { m_color = color; }
 };
 
 struct World {
