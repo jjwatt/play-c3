@@ -146,6 +146,15 @@ Color get_random_color(void)
     return color;
 }
 
+void set_color(SDL_Renderer* renderer, Color color)
+{
+    SDL_SetRenderDrawColor(renderer,
+			   color.red,
+			   color.green,
+			   color.blue,
+			   color.alpha);
+}
+
 int main(void)
 {
     constexpr int screen_width {640};
@@ -179,10 +188,8 @@ int main(void)
 		  {3.0, 0.0});
     World world{};
 
-    // TODO: Put color in the square
     // Setup first square color
-    Color square_color {};
-    set_random_color(square_color);
+    square.setColor(get_random_color());
 
     // Set background color
     Color bg_color {};
@@ -195,19 +202,11 @@ int main(void)
 	    }
 	}
 	// Draw background
-	SDL_SetRenderDrawColor(renderer,
-			       bg_color.red,
-			       bg_color.green,
-			       bg_color.blue,
-			       bg_color.alpha);
+	set_color(renderer, bg_color);
 	SDL_RenderClear(renderer);
 
-	// Set square color
-	SDL_SetRenderDrawColor(renderer,
-			       square_color.red,
-			       square_color.green,
-			       square_color.blue,
-			       square_color.alpha);
+	// Set renderer color for painting square
+	set_color(renderer, square.color());
 
 	// Apply gravity
 	square.applyGravity(world.gravity);
@@ -218,44 +217,44 @@ int main(void)
 	square.updatePosition();
 
 	// Handle collisions
-	bool on_right_wall = (square.position().x >= screen_width - square.size().x);
-	bool on_left_wall = (square.position().x <= 0);
-	bool on_wall = (on_right_wall || on_left_wall);
-	bool on_floor = (square.position().y >= screen_height - square.size().y);
-	bool on_ceiling = (square.position().y <= 0);
+	bool is_on_right_wall = (square.position().x >= screen_width - square.size().x);
+	bool is_on_left_wall = (square.position().x <= 0);
+	bool is_on_wall = (is_on_right_wall || is_on_left_wall);
+	bool is_on_floor = (square.position().y >= screen_height - square.size().y);
+	bool is_on_ceiling = (square.position().y <= 0);
 
-	if (on_wall) {
+	if (is_on_wall) {
 	    // Reset x on boundries
-	    if (on_left_wall) {
+	    if (is_on_left_wall) {
 		square.setPosX(0);
 	    }
-	    if (on_right_wall) {
+	    if (is_on_right_wall) {
 		square.setPosX(screen_width - square.size().x);
 	    }
 	    // Bounce off wall with some energy loss
 	    square.dampX(world.damping);
 	    // Change to random color
-	    set_random_color(square_color);
+	    square.setColor(get_random_color());
 	}
 
-	if (on_floor) {
+	if (is_on_floor) {
 	    square.setPosY(screen_height - square.size().y);
 	    // Only bounce if moving fast enough
 	    if (square.velocity().y > 0.5) {
 		square.dampY(world.damping);
 		// Change to random color
-		set_random_color(square_color);
+		square.setColor(get_random_color());
 	    } else {
 		// Ground friction
 		square.setVelocity({square.velocity().x * 0.95, 0});
 	    }
 	}
-	if (on_ceiling) {
+	if (is_on_ceiling) {
 	    // Bounce off the ceiling w/o loss
 	    square.setPosY(0);
 	    square.dampY(world.damping);
 	    // Change to random color
-	    set_random_color(square_color);
+	    square.setColor(get_random_color());
 	}
 	// Draw
 	SDL_Rect rect = { .x = static_cast<int>(square.position().x),
