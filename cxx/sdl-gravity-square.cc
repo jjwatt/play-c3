@@ -4,17 +4,36 @@
 #include "SDL2/SDL.h"
 
 struct Vec2 {
-    double x = 0.0;
-    double y = 0.0;
+    double x {0.0};
+    double y {0.0};
 
     Vec2() = default;
     Vec2(double x_val, double y_val)
-	: x(x_val)
-	, y(y_val) {}
+	: x {x_val}
+	, y {y_val} {}
     Vec2 operator+(const Vec2& other) const {
 	return Vec2(x + other.x, y + other.y);
     }
     // TODO: Add more methods
+};
+
+struct Color {
+    // Default to white
+    Uint8 red {0xff};
+    Uint8 green {0xff};
+    Uint8 blue {0xff};
+    Uint8 alpha {0xff};
+    Color() = default;
+    Color(Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+	: red {r}
+	, green {g}
+	, blue {b}
+	, alpha(a) {}
+    Color(Uint8 r, Uint8 g, Uint8 b)
+	: red {r}
+	, green {g}
+	, blue {b}
+	, alpha {0xff} {}
 };
 
 struct Square {
@@ -22,16 +41,16 @@ struct Square {
     double height = 10.0;
     double x = 0.0;
     double y = 0.0;
-    Vec2 velocity;
+    Vec2 velocity {};
 
+    Square() = default;
     Square(double w, double h, double x_pos, double y_pos,
-	   Vec2 vel = Vec2())
+	   Vec2 vel)
 	: width(w)
 	, height(h)
 	, x(x_pos)
 	, y(y_pos)
 	, velocity(vel) {}
-    Square() = default;
     Square(double w, double h)
 	: width(w)
 	, height(h) {}
@@ -41,13 +60,9 @@ struct World {
     double gravity = 0.5;
     double damping = 0.9;
     double air_resistance = 0.995;
+    World() = default;
     World(double g, double d, double ar)
 	: gravity(g), damping(d), air_resistance(ar) {}
-    World() = default;
-};
-
-struct Color {
-    Uint8 r, g, b, a;
 };
 
 void set_random_color(Color& color)
@@ -57,10 +72,9 @@ void set_random_color(Color& color)
     static std::mt19937 gen(rd());
     static std::uniform_int_distribution<> distrib(0, 255);
 
-    color.r = distrib(gen);
-    color.g = distrib(gen);
-    color.b = distrib(gen);
-    color.a = 0xff;
+    color.red = distrib(gen);
+    color.green = distrib(gen);
+    color.blue = distrib(gen);
 }
 
 int main(void)
@@ -88,24 +102,19 @@ int main(void)
     SDL_Event e{};
     bool quit {false};
 
-    double start_x = screen_width / 2;
-    double start_y = screen_height / 2;
-
     // TODO: Array of squares
-    Square square(100.0, 100.0);
-
-    // Initial square velocity
-    square.velocity = Vec2(3.0, 0.0);
-
-    // Initial square position
-    // TODO: randomize position
-    square.x = start_x;
-    square.y = start_y;
+    // TODO: Random velocity for each square
+    Square square(100.0,
+		  100.0,
+		  screen_width / 2,
+		  screen_height / 2,
+		  Vec2 {3.0, 0.0});
 
     World world{};
 
+    // TODO: Put color in the square
     // Setup first square color
-    Color color;
+    Color color {};
     set_random_color(color);
 
     while (!quit) {
@@ -114,12 +123,21 @@ int main(void)
 		quit = true;
 	    }
 	}
-	// Set background color to white
-	SDL_SetRenderDrawColor(renderer, 0xff, 0xff, 0xff, 0xff);
+	// Set background color
+	Color bg_color {};
+	SDL_SetRenderDrawColor(renderer,
+			       bg_color.red,
+			       bg_color.green,
+			       bg_color.blue,
+			       bg_color.alpha);
 	SDL_RenderClear(renderer);
 
 	// Set square color
-	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawColor(renderer,
+			       color.red,
+			       color.green,
+			       color.blue,
+			       color.alpha);
 
 	// Apply gravity
 	square.velocity.y += world.gravity;
