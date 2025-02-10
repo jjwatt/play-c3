@@ -34,15 +34,18 @@ struct Color {
 
 };
 
-struct Square {
+// TODO: Add set_color function that takes a Color
+// TODO: Add set_random_color function to this class
+class Square
+{
+public:
     double width {10.0};
     double height {10.0};
     double x {0.0};
     double y {0.0};
     Vec2 velocity {};
-    // TODO: Add color here
-    // Color color {};
-
+    Color color {};
+    
     Square() = default;
     Square(double w, double h, double x_pos, double y_pos, Vec2 v)
 	: width {w}
@@ -53,6 +56,10 @@ struct Square {
     Square(double w, double h)
 	: width {w}
 	, height {h} {}
+    double getWidth() const { return width; }
+    void setWidth(double w) { width = w; }
+    double getHeight() const { return height; }
+    void setHeight(double h) { height = h; }
 };
 
 struct World {
