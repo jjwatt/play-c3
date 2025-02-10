@@ -37,32 +37,32 @@ struct Color {
 };
 
 struct Square {
-    double width = 10.0;
-    double height = 10.0;
-    double x = 0.0;
-    double y = 0.0;
+    double width {10.0};
+    double height {10.0};
+    double x {0.0};
+    double y {0.0};
     Vec2 velocity {};
+    Color color {};
 
     Square() = default;
-    Square(double w, double h, double x_pos, double y_pos,
-	   Vec2 vel)
-	: width(w)
-	, height(h)
-	, x(x_pos)
-	, y(y_pos)
-	, velocity(vel) {}
+    Square(double w, double h, double x_pos, double y_pos, Vec2 v)
+	: width {w}
+	, height {h}
+	, x {x_pos}
+	, y {y_pos}
+	, velocity {v} {}
     Square(double w, double h)
-	: width(w)
-	, height(h) {}
+	: width {w}
+	, height {h} {}
 };
 
 struct World {
-    double gravity = 0.5;
-    double damping = 0.9;
-    double air_resistance = 0.995;
+    double gravity {0.5};
+    double damping {0.9};
+    double air_resistance {0.995};
     World() = default;
     World(double g, double d, double ar)
-	: gravity(g), damping(d), air_resistance(ar) {}
+	: gravity {g}, damping {d}, air_resistance {ar} {}
 };
 
 void set_random_color(Color& color)
@@ -114,17 +114,20 @@ int main(void)
 
     // TODO: Put color in the square
     // Setup first square color
-    Color color {};
-    set_random_color(color);
+    Color square_color {};
+    set_random_color(square_color);
 
+    // Set background color
+    Color bg_color {};
+
+    // Main loop
     while (!quit) {
 	while (SDL_PollEvent(&e) != 0) {
 	    if (e.type == SDL_QUIT) {
 		quit = true;
 	    }
 	}
-	// Set background color
-	Color bg_color {};
+	// Draw background
 	SDL_SetRenderDrawColor(renderer,
 			       bg_color.red,
 			       bg_color.green,
@@ -134,10 +137,10 @@ int main(void)
 
 	// Set square color
 	SDL_SetRenderDrawColor(renderer,
-			       color.red,
-			       color.green,
-			       color.blue,
-			       color.alpha);
+			       square_color.red,
+			       square_color.green,
+			       square_color.blue,
+			       square_color.alpha);
 
 	// Apply gravity
 	square.velocity.y += world.gravity;
@@ -166,7 +169,7 @@ int main(void)
 	    // Bounce off wall with some energy loss
 	    square.velocity.x *= -world.damping;
 	    // Change to random color
-	    set_random_color(color);
+	    set_random_color(square_color);
 	}
 	
 	if (on_floor) {
@@ -175,7 +178,7 @@ int main(void)
 	    if (square.velocity.y > 0.5) {
 		square.velocity.y *= -world.damping;
 		// Change to random color
-		set_random_color(color);
+		set_random_color(square_color);
 	    } else {
 		square.velocity.y = 0;
 		// Ground friction
@@ -187,7 +190,7 @@ int main(void)
 	    square.y = 0;
 	    square.velocity.y *= -world.damping;
 	    // Change to random color
-	    set_random_color(color);
+	    set_random_color(square_color);
 	}
 	// Draw
 	SDL_Rect rect = { .x = static_cast<int>(square.x),
