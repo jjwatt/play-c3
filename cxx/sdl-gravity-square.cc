@@ -134,6 +134,17 @@ Color get_random_color(void)
     return color;
 }
 
+Vec2 get_random_velocity(void)
+{
+    // Setup random number generator for colors
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> distrib(0, 20);
+
+    return Vec2 {static_cast<double>(distrib(gen)),
+		 static_cast<double>(distrib(gen))};
+}
+
 void set_color(SDL_Renderer* renderer, Color color)
 {
     SDL_SetRenderDrawColor(renderer,
@@ -173,7 +184,7 @@ int main(void)
     // TODO: Random velocity for each square
     Square square({100.0, 100.0},
 		  {screen_width / 2, screen_height / 2},
-		  {3.0, 0.0});
+		  get_random_velocity());
     World world{};
 
     // Setup first square color
@@ -253,7 +264,7 @@ int main(void)
 
 	// Update the screen
 	SDL_RenderPresent(renderer);
-	SDL_Delay(20);
+	SDL_Delay(15);
     }
 
     SDL_DestroyRenderer(renderer);
