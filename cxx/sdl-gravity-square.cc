@@ -120,18 +120,6 @@ struct World {
 	: gravity {g}, damping {d}, air_resistance {ar} {}
 };
 
-void set_random_color(Color& color)
-{
-    // Setup random number generator for colors
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> distrib(0, 255);
-
-    color.red = distrib(gen);
-    color.green = distrib(gen);
-    color.blue = distrib(gen);
-}
-
 Color get_random_color(void)
 {
     // Setup random number generator for colors
