@@ -120,29 +120,28 @@ struct World {
 	: gravity {g}, damping {d}, air_resistance {ar} {}
 };
 
-Color get_random_color(void)
+int get_random_int(int low, int high)
 {
-    // Setup random number generator for colors
+    // Setup random number generator for low to high
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> distrib(0, 255);
+    std::uniform_int_distribution<> distrib(low, high);
+    return distrib(gen);
+}
 
+Color get_random_color(void)
+{
     Color color {};
-    color.red = distrib(gen);
-    color.green = distrib(gen);
-    color.blue = distrib(gen);
+    color.red = get_random_int(0, 255);
+    color.green = get_random_int(0, 255);
+    color.blue = get_random_int(0, 255);
     return color;
 }
 
 Vec2 get_random_velocity(void)
 {
-    // Setup random number generator for colors
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> distrib(0, 20);
-
-    return Vec2 {static_cast<double>(distrib(gen)),
-		 static_cast<double>(distrib(gen))};
+    return Vec2 {static_cast<double>(get_random_int(0, 20)),
+		 static_cast<double>(get_random_int(0, 20))};
 }
 
 void set_color(SDL_Renderer* renderer, Color color)
@@ -181,7 +180,20 @@ int main(void)
     bool quit {false};
 
     // TODO: Array of squares
-    // TODO: Random velocity for each square
+    std::vector<Square> squares;
+    for (int i {0}; i < 2; ++i) {
+	auto square = Square({100.0, 100.0},
+			{screen_width / 2, screen_height / 2},
+			get_random_velocity());
+	squares.push_back(square);
+    }
+    // for (auto square = squares.begin(); square != squares.end(); ++square) {
+    // 	square->setColor(get_random_color());
+    // }
+    for (auto& square : squares) {
+	square.setColor(get_random_color());
+    }
+
     Square square({100.0, 100.0},
 		  {screen_width / 2, screen_height / 2},
 		  get_random_velocity());
@@ -261,7 +273,6 @@ int main(void)
 			  .w = static_cast<int>(square.size().x),
 			  .h = static_cast<int>(square.size().y) };
 	SDL_RenderFillRect(renderer, &rect);
-
 	// Update the screen
 	SDL_RenderPresent(renderer);
 	SDL_Delay(15);
