@@ -31,32 +31,6 @@ struct Color {
 	, alpha(a) {}
     Color(Uint8 r, Uint8 g, Uint8 b)
 	: Color(r, g, b, 0xff) {}
-
-};
-
-class OldSquare
-{
-public:
-    // TODO: Make width and height a Vec2, dimensions
-    double width {10.0};
-    double height {10.0};
-    // TODO: Make x and y a Vec2, position
-    double x {0.0};
-    double y {0.0};
-    Vec2 position {};
-    Vec2 velocity {};
-    Color color {};
-
-    OldSquare() = default;
-    OldSquare(double w, double h, double x_pos, double y_pos, Vec2 v)
-	: width {w}
-	, height {h}
-	, x {x_pos}
-	, y {y_pos}
-	, velocity {v} {}
-    OldSquare(double w, double h)
-	: width {w}
-	, height {h} {}
 };
 
 class Square
@@ -153,6 +127,14 @@ void set_color(SDL_Renderer* renderer, Color color)
 			   color.alpha);
 }
 
+void draw(void) {
+    // TODO
+}
+
+void update(void) {
+    // TODO
+}
+
 int main(void)
 {
     constexpr int screen_width {640};
@@ -187,9 +169,7 @@ int main(void)
 			get_random_velocity());
 	squares.push_back(square);
     }
-    // for (auto square = squares.begin(); square != squares.end(); ++square) {
-    // 	square->setColor(get_random_color());
-    // }
+
     for (auto& square : squares) {
 	square.setColor(get_random_color());
     }
@@ -207,6 +187,7 @@ int main(void)
 
     // Main loop
     while (!quit) {
+	// TODO: Add reset
 	while (SDL_PollEvent(&e) != 0) {
 	    if (e.type == SDL_QUIT) {
 		quit = true;
