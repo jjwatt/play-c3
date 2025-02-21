@@ -114,8 +114,8 @@ Color get_random_color(void)
 
 Vec2 get_random_velocity(void)
 {
-    return Vec2 {static_cast<double>(get_random_int(0, 20)),
-		 static_cast<double>(get_random_int(0, 20))};
+    return Vec2 {static_cast<double>(get_random_int(-20, 20)),
+		 static_cast<double>(get_random_int(-20, 20))};
 }
 
 void set_color(SDL_Renderer* renderer, Color color)
