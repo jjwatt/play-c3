@@ -132,6 +132,8 @@ constexpr int gScreenHeight {480};
 SDL_Window *gWindow = nullptr;
 SDL_Renderer *gRenderer = nullptr;
 Square *gSquare;
+std::vector<Square*> gSquares;
+constexpr int gNumSquares = 2;
 World gWorld;
 Color gBackgroundColor;
 
@@ -150,11 +152,22 @@ int init(void) {
 			      SDL_WINDOW_SHOWN);
     gRenderer = SDL_CreateRenderer(gWindow,
 				       -1,
-				       SDL_RENDERER_ACCELERATED);
+				       SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     gWorld = {};
     gBackgroundColor = {};
 
     return 1;
+}
+
+void init_squares(void) {
+    for (int i = 0; i < gNumSquares; ++i) {
+	auto square = new Square({100.0, 100.0},
+			    {gScreenWidth / 2, gScreenHeight / 2},
+			    get_random_velocity());
+	// Set color
+	square->setColor(get_random_color());
+	gSquares.push_back(square);
+    }
 }
 
 void init_square(void) {
@@ -162,9 +175,8 @@ void init_square(void) {
     gSquare = new Square({100.0, 100.0},
 			 {gScreenWidth / 2, gScreenHeight / 2},
 			 get_random_velocity());
-    // Setup first square color
+    // Setup square color
     gSquare->setColor(get_random_color());
-
 }
 
 void draw(void) {
@@ -185,6 +197,27 @@ void draw(void) {
     // Update the screen
     SDL_RenderPresent(gRenderer);
 }
+
+
+void draw_squares(void) {
+    // Draw background
+    set_color(gRenderer, gBackgroundColor);
+    SDL_RenderClear(gRenderer);
+    for (auto square : gSquares) {
+	// Set gRenderer color for painting square
+	set_color(gRenderer, square->color());
+
+	// Draw
+	SDL_Rect rect = { .x = static_cast<int>(square->position().x),
+			  .y = static_cast<int>(square->position().y),
+			  .w = static_cast<int>(square->size().x),
+			  .h = static_cast<int>(square->size().y) };
+	SDL_RenderFillRect(gRenderer, &rect);
+    }
+    // Update the screen
+    SDL_RenderPresent(gRenderer);
+}
+
 
 void update(void) {
     // Apply gravity
@@ -237,6 +270,59 @@ void update(void) {
     }
 }
 
+void update_squares(void) {
+    for (auto square : gSquares) {
+	// Apply gravity
+	square->applyGravity(gWorld.gravity);
+	// Apply air resistance to horizontal movement
+	square->applyAirResistance(gWorld.air_resistance);
+
+	// Update position
+	square->updatePosition();
+
+	// Handle collisions
+	bool is_on_right_wall = (square->position().x >= gScreenWidth - square->size().x);
+	bool is_on_left_wall = (square->position().x <= 0);
+	bool is_on_wall = (is_on_right_wall || is_on_left_wall);
+	bool is_on_floor = (square->position().y >= gScreenHeight - square->size().y);
+	bool is_on_ceiling = (square->position().y <= 0);
+
+	if (is_on_wall) {
+	    // Reset x on boundries
+	    if (is_on_left_wall) {
+		square->setPosX(0);
+	    }
+	    if (is_on_right_wall) {
+		square->setPosX(gScreenWidth - square->size().x);
+	    }
+	    // Bounce off wall with some energy loss
+	    square->dampX(gWorld.damping);
+	    // Change to random
+	    square->setColor(get_random_color());
+	}
+
+	if (is_on_floor) {
+	    square->setPosY(gScreenHeight - square->size().y);
+	    // Only bounce if moving fast enough
+	    if (square->velocity().y > 0.5) {
+		square->dampY(gWorld.damping);
+		// Change to random color
+		square->setColor(get_random_color());
+	    } else {
+		// Ground friction
+		square->setVelocity({square->velocity().x * 0.95, 0});
+	    }
+	}
+	if (is_on_ceiling) {
+	    // Bounce off the ceiling w/o loss
+	    square->setPosY(0);
+	    square->dampY(gWorld.damping);
+	    // Change to random color
+	    square->setColor(get_random_color());
+	}
+    }
+}
+
 void close(void) {
     SDL_DestroyRenderer(gRenderer);
     SDL_DestroyWindow(gWindow);
@@ -249,6 +335,14 @@ void reinit_square(void) {
     init_square();
 }
 
+void reinit_squares(void) {
+    for (auto square : gSquares) {
+	delete square;
+    }
+    gSquares.clear();
+    init_squares();
+}
+
 int main(void)
 {
     if (!init()) {
@@ -259,7 +353,8 @@ int main(void)
     SDL_Event e{};
     bool quit {false};
 
-    init_square();
+    //init_square();
+    init_squares();
     // Main loop
     while (!quit) {
 	// TODO: Add reset
@@ -268,30 +363,16 @@ int main(void)
 		quit = true;
 	    } else if (e.type == SDL_KEYDOWN) {
 		if (e.key.keysym.sym == SDLK_SPACE) {
-		    reinit_square();
+		    reinit_squares();
 		}
 	    }
 	}
-	draw();
-	update();
+	// draw();
+	draw_squares();
+	// update();
+	update_squares();
 	SDL_Delay(15);
     }
     close();
-    return 0;
-}
-
-int make_squares(void) {
-    // TODO: Array of squares
-    std::vector<Square> squares;
-    for (int i {0}; i < 2; ++i) {
-	auto square = Square({100.0, 100.0},
-			{gScreenWidth / 2, gScreenHeight / 2},
-			get_random_velocity());
-	squares.push_back(square);
-    }
-
-    for (auto& square : squares) {
-	square.setColor(get_random_color());
-    }
     return 0;
 }
